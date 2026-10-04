@@ -346,7 +346,10 @@ function FormFoto({ planta }: { planta: Planta }) {
   const [erro, setErro] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!arquivo) return setPrevia(null);
+    if (!arquivo) {
+      setPrevia(null);
+      return;
+    }
     const url = URL.createObjectURL(arquivo);
     setPrevia(url);
     return () => URL.revokeObjectURL(url);

@@ -391,3 +391,39 @@ details summary { cursor: pointer; color: var(--suave); min-height: 36px; paddin
 .insumo .linha-campo input { width: 110px; }
 .alerta-clima.neutro { background: var(--verde-claro); color: var(--verde); font-weight: 500; }
 .contador { font-size: 2rem; font-weight: 800; color: var(--verde); margin: 4px 0; }
+
+/* ---------- Fase 4: formação e evolução ---------- */
+.atalhos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 10px 0 0; }
+.atalhos a {
+  display: flex; align-items: center; justify-content: center; min-height: 48px; border-radius: 12px;
+  background: var(--cartao); border: 1px solid var(--borda); color: var(--texto); text-decoration: none; font-size: 0.9rem; font-weight: 600;
+}
+.botoes.checkup { margin: 0 0 12px; }
+.projeto-cartao { display: grid; gap: 4px; color: var(--texto); text-decoration: none; }
+.projeto-cartao .selo { justify-self: start; }
+.linha-tempo { list-style: none; padding: 0; border-left: 3px solid var(--verde-claro); margin-left: 6px; }
+.linha-tempo li { padding: 6px 0 6px 12px; position: relative; }
+.linha-tempo li::before { content: ""; position: absolute; left: -8px; top: 12px; width: 12px; height: 12px; border-radius: 50%; background: var(--verde); }
+.lista-simples.links li { display: flex; justify-content: space-between; align-items: center; }
+.barra-taxa { display: grid; grid-template-columns: minmax(90px, 1fr) 2fr auto auto; gap: 8px; align-items: center; margin: 6px 0; }
+.trilho { height: 12px; border-radius: 6px; background: var(--verde-claro); overflow: hidden; }
+.cheio { height: 100%; background: var(--verde); }
+.zona .titulo-zona { display: flex; justify-content: space-between; align-items: center; }
+.zona h2 { margin: 0; }
+.lista-zona { list-style: none; padding: 0; }
+.planta-zona { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--borda); }
+.planta-zona a { color: var(--texto); }
+.planta-zona select { min-height: 40px; width: 150px; padding: 4px 8px; font-size: 0.85rem; grid-row: span 2; }
+.planta-zona.conflito a { color: var(--vermelho); font-weight: 600; }
+.chat { display: grid; gap: 8px; margin: 12px 0; }
+.balao { padding: 10px 14px; border-radius: 16px; max-width: 92%; white-space: pre-wrap; }
+.balao.pergunta { justify-self: end; background: var(--verde); color: var(--fundo); border-bottom-right-radius: 4px; margin-left: auto; }
+.balao.resposta { background: var(--cartao); border: 1px solid var(--borda); border-bottom-left-radius: 4px; }
+.balao.resposta p { margin: 0 0 6px; }
+.balao.esperando { color: var(--suave); }
+.comparacao { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0; }
+.comparacao figure { margin: 0; }
+.comparacao img, .comparacao .sem-miniatura { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 12px; background: var(--fundo); }
+.comparacao figcaption { font-size: 0.8rem; color: var(--suave); margin-top: 4px; }
+button.foto { border: 2px solid transparent; background: none; padding: 0; border-radius: 12px; font: inherit; cursor: pointer; }
+button.foto.escolhida { border-color: var(--verde); }

@@ -19,6 +19,11 @@ import { Historico, Hoje, NovaPendencia } from "./telas/Hoje";
 import { Escanear } from "./telas/Escanear";
 import { Desejos, NovaPlanta } from "./telas/Desejos";
 import { Insumos } from "./telas/Insumos";
+import { ProjetoDetalhe, Projetos } from "./telas/Projetos";
+import { Propagacao } from "./telas/Propagacao";
+import { Zonas } from "./telas/Zonas";
+import { Consultor } from "./telas/Consultor";
+import { Evolucao } from "./telas/Evolucao";
 
 const TIPOS_REGISTRO: TipoRegistro[] = ["rega", "adubacao", "medicao", "foto", "outro"];
 
@@ -53,6 +58,8 @@ export function App() {
   let tela;
   if (secao === "planta" && id === "nova") tela = <NovaPlanta />;
   else if (secao === "planta" && id && acao === "editar") tela = <Editar id={id} />;
+  else if (secao === "planta" && id && acao === "consultor") tela = <Consultor key={id} plantaId={id} />;
+  else if (secao === "planta" && id && acao === "fotos") tela = <Evolucao key={id} plantaId={id} />;
   else if (secao === "planta" && id && acao === "registrar" && TIPOS_REGISTRO.includes(tipo as TipoRegistro)) {
     tela = <Registrar key={`${id}-${tipo}-${extra ?? ""}`} plantaId={id} tipo={tipo as TipoRegistro} tipoInicial={extra} />;
   } else if (secao === "planta" && id) tela = <Ficha id={id} />;
@@ -61,6 +68,10 @@ export function App() {
   else if (secao === "escanear") tela = <Escanear key={id ?? "novo"} plantaId={id ?? null} />;
   else if (secao === "desejos") tela = <Desejos />;
   else if (secao === "insumos") tela = <Insumos />;
+  else if (secao === "projetos" && id) tela = <ProjetoDetalhe key={id} id={id} />;
+  else if (secao === "projetos") tela = <Projetos />;
+  else if (secao === "propagacao") tela = <Propagacao />;
+  else if (secao === "zonas") tela = <Zonas />;
   else if (secao === "hoje") tela = <Hoje />;
   else if (secao === "historico") tela = <Historico />;
   else if (secao === "revisao") tela = <Revisao />;
@@ -68,7 +79,7 @@ export function App() {
   else if (secao === "config") tela = <Config />;
   else tela = <Lista />;
 
-  const atual = !secao || secao === "planta" || secao === "desejos" ? "" : ["registrar", "pendencia", "historico"].includes(secao) ? "hoje" : secao === "etiquetas" || secao === "insumos" ? "config" : secao;
+  const atual = !secao || secao === "planta" || ["desejos", "projetos", "propagacao", "zonas"].includes(secao) ? "" : ["registrar", "pendencia", "historico"].includes(secao) ? "hoje" : secao === "etiquetas" || secao === "insumos" ? "config" : secao;
   const ativa = (s: string) => (atual === s ? "ativa" : "");
 
   return (

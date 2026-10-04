@@ -31,7 +31,7 @@ function FotosDaPlanta({ plantaId }: { plantaId: string }) {
   if (fotos.length === 0) return null;
   return (
     <section className="cartao">
-      <h2>Fotos</h2>
+      <h2>Fotos {fotos.length >= 2 && <a className="link" href={`#/planta/${plantaId}/fotos`}>ver evolução ›</a>}</h2>
       <div className="grade-fotos">
         {fotos.map((f) => {
           const conteudo = (
@@ -107,7 +107,12 @@ export function Ficha({ id }: { id: string }) {
           <a href={`#/planta/${id}/registrar/outro`}><span>📝</span>Outro</a>
         </nav>
       )}
-      {!removida && <a className="botao secundario largo checkup sem-impressao" href={`#/escanear/${id}`}>🩺 Check-up com IA (fotos + laudo)</a>}
+      {!removida && (
+        <div className="botoes checkup sem-impressao">
+          <a className="botao secundario" href={`#/escanear/${id}`}>🩺 Check-up com IA</a>
+          <a className="botao secundario" href={`#/planta/${id}/consultor`}>💬 Perguntar à IA</a>
+        </div>
+      )}
 
       {medicao && (
         <section className="cartao">
@@ -190,7 +195,7 @@ export function Ficha({ id }: { id: string }) {
           <h2>Projetos</h2>
           {projetos.map((pr) => (
             <div key={pr.id} className="projeto">
-              <b>{pr.nome}</b> — {pr.fase_atual ?? "fase não informada"}
+              <a href={`#/projetos/${pr.id}`}><b>{pr.nome}</b></a> — {pr.fase_atual ?? "fase não informada"}
               {pr.proximo_marco && <p className="ajuda">Próximo marco: {pr.proximo_marco}</p>}
             </div>
           ))}

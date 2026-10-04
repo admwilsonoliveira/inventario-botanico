@@ -332,8 +332,8 @@ export function resumoLaudo(l: Laudo, acoes: AcaoConferida[]): string {
 
 async function nuvem(banco: BancoInventario) {
   const cfg = await lerConfigNuvem(banco);
-  if (!cfg) throw new Error("Ligue a nuvem em Configurações para usar o escaneamento.");
-  if (!navigator.onLine) throw new Error("Sem internet. O escaneamento precisa de conexão.");
+  if (!cfg) throw new Error("Ligue a nuvem em Configurações para usar a IA.");
+  if (!navigator.onLine) throw new Error("Sem internet. A IA precisa de conexão.");
   return cfg;
 }
 
