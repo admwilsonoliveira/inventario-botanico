@@ -59,7 +59,7 @@ export function mesclarMeta(chave: string, local: unknown, remoto: unknown): unk
   return null;
 }
 
-async function chamar(cfg: ConfigNuvem, corpo: object, tempoMs = 90_000) {
+export async function chamar(cfg: ConfigNuvem, corpo: object, tempoMs = 90_000) {
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), tempoMs);
   try {
@@ -170,7 +170,7 @@ export async function sincronizar(banco: BancoInventario): Promise<{ enviados: n
   return { enviados, recebidos };
 }
 
-async function blobParaBase64(b: Blob): Promise<string> {
+export async function blobParaBase64(b: Blob): Promise<string> {
   const bytes = new Uint8Array(await b.arrayBuffer());
   let bin = "";
   for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
