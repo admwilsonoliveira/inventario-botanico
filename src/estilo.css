@@ -390,3 +390,4 @@ details summary { cursor: pointer; color: var(--suave); min-height: 36px; paddin
 .nome-insumo small { color: var(--suave); }
 .insumo .linha-campo input { width: 110px; }
 .alerta-clima.neutro { background: var(--verde-claro); color: var(--verde); font-weight: 500; }
+.contador { font-size: 2rem; font-weight: 800; color: var(--verde); margin: 4px 0; }

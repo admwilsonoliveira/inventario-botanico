@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db, lerConfig } from "../db";
 import { criarPlanta } from "../carga";
@@ -37,6 +37,31 @@ function Miniatura({ blob }: { blob: Blob }) {
   return url ? <img src={url} alt="" /> : null;
 }
 
+/** Tela de espera: mantém a tela acesa (senão o celular corta a conexão), mostra o tempo e deixa cancelar. */
+function Esperando({ texto, aoCancelar }: { texto: string; aoCancelar: () => void }) {
+  const [segundos, setSegundos] = useState(0);
+  useEffect(() => {
+    const inicio = Date.now();
+    const t = setInterval(() => setSegundos(Math.round((Date.now() - inicio) / 1000)), 1000);
+    let trava: { release: () => Promise<void> } | null = null;
+    const nav = navigator as Navigator & { wakeLock?: { request: (t: "screen") => Promise<{ release: () => Promise<void> }> } };
+    nav.wakeLock?.request("screen").then((w) => { trava = w; }).catch(() => {});
+    return () => {
+      clearInterval(t);
+      trava?.release().catch(() => {});
+    };
+  }, []);
+  return (
+    <div className="carregando-ia">
+      <div className="girando" aria-hidden="true">🌿</div>
+      <p>{texto}</p>
+      <p className="contador">{segundos} s</p>
+      <p className="ajuda">Deixe o app aberto nesta tela até terminar.{segundos > 60 ? " O Gemini está demorando: o script está tentando os modelos de reserva." : ""}</p>
+      <button className="botao secundario" onClick={aoCancelar}>Cancelar</button>
+    </div>
+  );
+}
+
 export function Escanear({ plantaId }: { plantaId: string | null }) {
   const plantaCheckup = useLiveQuery(async () => (plantaId ? (await db.plantas.get(plantaId)) ?? null : null), [plantaId]);
   const [fotos, setFotos] = useState<Record<number, FotoEscaneada>>({});
@@ -52,6 +77,7 @@ export function Escanear({ plantaId }: { plantaId: string | null }) {
   const [erro, setErro] = useState<string | null>(null);
   const [salvando, setSalvando] = useState(false);
   const [repetir, setRepetir] = useState<(() => void) | null>(null);
+  const geracao = useRef(0);
 
   /** Mensagem de erro com o botão de tentar de novo a última análise. */
   const caixaErro = erro && (
@@ -117,12 +143,15 @@ export function Escanear({ plantaId }: { plantaId: string | null }) {
     setErro(null);
     setRepetir(() => () => identificar());
     setEtapa("identificando");
+    const minha = ++geracao.current;
     try {
       const c = await identificarFotos(db, lista);
+      if (minha !== geracao.current) return;
       setCandidatos(c);
       setEscolhido(c[0] && c[0].score >= CONFIANCA_MINIMA ? 0 : null);
       setEtapa("candidatos");
     } catch (e) {
+      if (minha !== geracao.current) return;
       setErro((e as Error).message);
       setEtapa("fotos");
     }
@@ -145,20 +174,24 @@ export function Escanear({ plantaId }: { plantaId: string | null }) {
     setRepetir(() => () => analisar(modo, candidato, planta));
     setAlvo(planta);
     setEtapa("analisando");
+    const minha = ++geracao.current;
     try {
       const { instrucoes, insumos } = await contexto(modo, candidato, planta);
       const regras = await db.regras.toArray();
       if (modo === "ficha") {
         const ficha = await analisarFotos<FichaIA>(db, instrucoes, lista, ESQUEMA_FICHA);
+        if (minha !== geracao.current) return;
         const r = conferirResposta(ficha.laudo, JSON.stringify(ficha), regras, insumos, null);
         setResultado({ modo, ficha, laudo: ficha.laudo, acoes: r.acoes, avisos: r.avisosGerais });
       } else {
         const laudo = await analisarFotos<Laudo>(db, instrucoes, lista, ESQUEMA_LAUDO);
+        if (minha !== geracao.current) return;
         const r = conferirResposta(laudo, JSON.stringify(laudo), regras, insumos, planta);
         setResultado({ modo, laudo, acoes: r.acoes, avisos: r.avisosGerais });
       }
       setEtapa("resultado");
     } catch (e) {
+      if (minha !== geracao.current) return;
       setErro((e as Error).message);
       setEtapa(modo === "checkup" && plantaId ? "fotos" : "candidatos");
     }
@@ -220,10 +253,13 @@ export function Escanear({ plantaId }: { plantaId: string | null }) {
     return (
       <>
         <h1>{titulo}</h1>
-        <div className="carregando-ia">
-          <div className="girando" aria-hidden="true">🌿</div>
-          <p>{etapa === "identificando" ? "Identificando pelo Pl@ntNet…" : "O Gemini está analisando as fotos… (pode levar até 1 minuto)"}</p>
-        </div>
+        <Esperando
+          texto={etapa === "identificando" ? "Identificando pelo Pl@ntNet…" : "O Gemini está analisando as fotos…"}
+          aoCancelar={() => {
+            geracao.current++;
+            setEtapa(etapa === "identificando" || modoCheckup ? "fotos" : "candidatos");
+          }}
+        />
       </>
     );
   }

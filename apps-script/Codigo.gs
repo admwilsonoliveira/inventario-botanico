@@ -385,10 +385,14 @@ function analisar_(req) {
   const chave = prop_("GEMINI_KEY", "");
   if (!chave) throw new Error("Falta a chave do Gemini (GEMINI_KEY) nas Propriedades do script.");
   conferirCota_("gemini");
-  // modelo principal e reservas (todos com cota grátis), usados se o principal estiver sobrecarregado
-  const modelos = [prop_("GEMINI_MODELO", "gemini-3.8-flash")].concat(
+  // modelo principal e reservas (todos com cota grátis), usados se o principal estiver sobrecarregado.
+  // O último modelo que respondeu bem vai primeiro (lembrado por 1 hora), para não esperar o sobrecarregado de novo.
+  let modelos = [prop_("GEMINI_MODELO", "gemini-3.8-flash")].concat(
     prop_("GEMINI_RESERVA", "gemini-3.7-flash,gemini-3.5-flash").split(",").map(function (m) { return m.trim(); }).filter(Boolean)
   );
+  const cache = CacheService.getScriptCache();
+  const ultimoOk = cache.get("gemini_modelo_ok");
+  if (ultimoOk && modelos.indexOf(ultimoOk) > 0) modelos = [ultimoOk].concat(modelos.filter(function (m) { return m !== ultimoOk; }));
 
   const entrada = [{ type: "text", text: req.instrucoes }].concat((req.imagens || []).slice(0, 6).map(function (img) {
     return { type: "image", data: img.base64, mime_type: img.mime || "image/jpeg" };
@@ -397,7 +401,7 @@ function analisar_(req) {
   let ultimo = null;
   for (let m = 0; m < modelos.length; m++) {
     const modelo = modelos[m];
-    for (let tentativa = 0; tentativa < 2; tentativa++) {
+    for (let tentativa = 0; tentativa < 1; tentativa++) { // uma tentativa por modelo: sobrecarga costuma demorar ~1 min para responder
       const corpo = { model: modelo, input: entrada, store: false };
       if (req.esquema) corpo.response_format = { type: "text", mime_type: "application/json", schema: req.esquema };
       let resp = chamarGemini_(GEMINI_URL, corpo, chave);
@@ -411,6 +415,7 @@ function analisar_(req) {
         const json = JSON.parse(resp.getContentText());
         const tokens = (json.usage && json.usage.total_tokens) || (json.usageMetadata && json.usageMetadata.totalTokenCount) || "";
         anotarUso_("gemini", 1, tokens, modelo);
+        cache.put("gemini_modelo_ok", modelo, 3600);
         const texto = textoDaResposta_(json);
         if (!texto) throw new Error("O Gemini não devolveu texto.");
         return { ok: true, resultado: lerJson_(texto), tokens: tokens, modelo: modelo };
@@ -421,8 +426,8 @@ function analisar_(req) {
       if (codigo === 400 || codigo === 401 || codigo === 403) {
         throw new Error("O Gemini recusou o pedido (" + codigo + "). Confira a chave GEMINI_KEY e o modelo " + modelo + ". " + ultimo.texto);
       }
-      if (codigo === 404 || codigo === 429) break; // modelo indisponível ou cota dele esgotada: vai para a reserva
-      Utilities.sleep(tentativa === 0 ? 3000 : 6000); // sobrecarga (503/500): espera e tenta de novo
+      // sobrecarga (503/500), modelo indisponível (404) ou cota dele esgotada (429): vai para a reserva
+      if (cache.get("gemini_modelo_ok") === modelo) cache.remove("gemini_modelo_ok");
     }
   }
   if (ultimo && ultimo.codigo === 429) throw new Error("O Gemini recusou: cota grátis atingida em todos os modelos. Tente mais tarde.");
