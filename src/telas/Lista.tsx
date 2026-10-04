@@ -42,9 +42,14 @@ export function Lista() {
           </button>
         ))}
       </div>
+      {(qtdRemovidas > 0 || verRemovidas) && (
+        <button className={verRemovidas ? "chip removidas ativo" : "chip removidas"} onClick={() => setVerRemovidas(!verRemovidas)}>
+          {verRemovidas ? "‹ Voltar para a coleção" : `🗑 Removidas (${qtdRemovidas})`}
+        </button>
+      )}
       <p className="contagem">
         {filtradas.length} {filtradas.length === 1 ? "registro" : "registros"}
-        {verRemovidas ? " removidos" : ""}
+        {verRemovidas ? (filtradas.length === 1 ? " removido" : " removidos") : ""}
       </p>
       <ul className="lista-plantas">
         {filtradas.map((p) => (
@@ -61,11 +66,6 @@ export function Lista() {
           </li>
         ))}
       </ul>
-      {(qtdRemovidas > 0 || verRemovidas) && (
-        <button className="botao secundario largo" onClick={() => setVerRemovidas(!verRemovidas)}>
-          {verRemovidas ? "Voltar para a coleção" : `Ver removidas (${qtdRemovidas})`}
-        </button>
-      )}
     </>
   );
 }

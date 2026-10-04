@@ -98,6 +98,8 @@ textarea { min-height: 120px; }
   background: var(--cartao); color: var(--texto); font: inherit;
 }
 .chip.ativo { background: var(--verde); color: var(--fundo); border-color: var(--verde); }
+.chip.removidas { margin-top: 6px; color: var(--vermelho); border-color: var(--vermelho-claro); }
+.chip.removidas.ativo { background: var(--vermelho); color: #fff; border-color: var(--vermelho); }
 .contagem { color: var(--suave); font-size: 0.9rem; margin: 6px 0; }
 .lista-plantas { list-style: none; padding: 0; margin: 0; }
 .lista-plantas li + li { margin-top: 8px; }
