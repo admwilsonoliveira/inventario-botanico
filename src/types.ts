@@ -69,7 +69,40 @@ export interface Evento {
   dose_g_l: number | null;
   volume_ml: number | null;
   observacao: string | null;
+  /** Como foi aplicado: junto com a rega, na folha ou no substrato. */
+  aplicacao?: "rega" | "foliar" | "substrato" | null;
+  /** Água usada (protocolo: só torneira). */
+  agua?: "torneira" | "chuva" | null;
+  /** Insumos do substrato num transplante/renovação. */
+  insumos?: string[];
+  /** Poda: percentual da área foliar removida. */
+  percentual_area_foliar?: number | null;
 }
+
+export const TIPOS_EVENTO: Record<string, string> = {
+  rega: "Rega",
+  adubacao: "Adubação",
+  medicao: "Medição",
+  foto: "Foto",
+  poda: "Poda",
+  poda_estrutural: "Poda estrutural",
+  desponte: "Desponte",
+  decapitacao: "Decapitação",
+  transplante: "Transplante",
+  renovacao_substrato: "Renovação do substrato",
+  lixiviacao: "Lixiviação",
+  acidificacao: "Acidificação (vinagre)",
+  tratamento: "Tratamento (praga/doença)",
+  propagacao: "Propagação",
+  plantio: "Plantio",
+  colheita: "Colheita",
+  tutoramento: "Tutoramento",
+  reposicionamento: "Mudança de lugar",
+  chegada: "Chegada",
+  observacao: "Observação",
+  decisao: "Decisão",
+  revisao: "Revisão"
+};
 
 export interface Pendencia {
   id: string;
