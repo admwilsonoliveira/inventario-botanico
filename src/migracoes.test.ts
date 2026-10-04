@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import seedJson from "../seed/inventario_inicial.json";
-import { BancoInventario, gravarMeta, lerMeta } from "./db";
-import { carregarSeVazio, type SeedJson } from "./carga";
+import { BancoInventario, EPOCA, gravarMeta, lerMeta } from "./db";
+import { carregarSeVazio, excluirDefinitivamente, type SeedJson } from "./carga";
 import { aplicarMigracoes } from "./migracoes";
 import type { Grupo } from "./types";
 
@@ -21,6 +21,45 @@ async function simularBancoAntigo() {
   await banco.meta.delete("grupos");
   await gravarMeta(banco, "migracoes_aplicadas", []);
 }
+
+describe("M002 — carimbo de alteração dos dados da Fase 0", () => {
+  it("o que é igual à carga fica com a data zero; o que foi editado fica com a hora atual", async () => {
+    // simula a Fase 0: nada tinha carimbo
+    for (const t of ["plantas", "eventos", "meta"]) {
+      await banco.table(t).toCollection().modify((l: Record<string, unknown>) => { delete l.atualizado_em; });
+    }
+    await banco.plantas.toCollection().modify((p) => {
+      if (p.id === "P02") p.objetivo = "teste";
+      delete p.atualizado_em;
+    });
+    await banco.eventos.add({ id: "uuid-revisao", planta_id: "P06", data: "2026-10-04", tipo: "revisao", produto: null, dose_g_l: null, volume_ml: null, observacao: "ok" });
+    await banco.eventos.toCollection().modify((e) => { delete e.atualizado_em; });
+    await gravarMeta(banco, "migracoes_aplicadas", ["M001-nomes-dos-grupos"]);
+
+    await aplicarMigracoes(banco);
+
+    expect((await banco.plantas.get("P01"))!.atualizado_em).toBe(EPOCA);
+    expect((await banco.plantas.get("P02"))!.atualizado_em! > EPOCA).toBe(true);
+    expect((await banco.eventos.get("E0001"))!.atualizado_em).toBe(EPOCA);
+    expect((await banco.eventos.get("uuid-revisao"))!.atualizado_em! > EPOCA).toBe(true);
+    expect((await banco.meta.get("proxima_ficha"))!.atualizado_em).toBe(EPOCA);
+  });
+});
+
+describe("carimbo automático", () => {
+  it("carga nova vem com data zero e qualquer edição recebe a hora atual", async () => {
+    expect((await banco.plantas.get("P01"))!.atualizado_em).toBe(EPOCA);
+    await banco.plantas.update("P01", { objetivo: "flores" });
+    expect((await banco.plantas.get("P01"))!.atualizado_em! > EPOCA).toBe(true);
+  });
+
+  it("excluir definitivamente anota a exclusão da planta e dos eventos para a planilha", async () => {
+    await excluirDefinitivamente(banco, "P41");
+    const apagados = await banco.apagados.toArray();
+    expect(apagados.some((a) => a.tabela === "plantas" && a.chave === "P41")).toBe(true);
+    expect(apagados.filter((a) => a.tabela === "eventos").length).toBeGreaterThan(0);
+  });
+});
 
 describe("M001 — nomes dos grupos", () => {
   it("carga nova já vem sem Grupo 4 e com os nomes", async () => {

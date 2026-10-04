@@ -1,6 +1,8 @@
 // Correções aplicadas uma única vez em aparelhos que já tinham feito a carga inicial.
 // A carga inicial (seed) já vem corrigida, então aparelhos novos só marcam estas migrações como feitas.
-import { type BancoInventario, gravarMeta, lerMeta } from "./db";
+import { type BancoInventario, EPOCA, gravarMeta, lerMeta, TABELAS_SYNC } from "./db";
+import { type Carga, prepararCarga } from "./carga";
+import { seed } from "./seed";
 import type { Grupo } from "./types";
 
 interface Migracao {
@@ -26,20 +28,58 @@ export const MIGRACOES: Migracao[] = [
       for (const [id, g] of Object.entries(destino)) {
         const p = await banco.plantas.get(id);
         if (!p || p.grupo !== 4) continue; // já editada à mão: respeita a escolha
-        await banco.plantas.update(id, { grupo: g });
-        await banco.eventos.add({
-          id: crypto.randomUUID(), planta_id: id, data: hoje, tipo: "revisao",
+        // "data zero" e código fixo: é a mesma correção em todos os aparelhos, não uma edição nova
+        await banco.plantas.update(id, { grupo: g, atualizado_em: EPOCA });
+        await banco.eventos.put({
+          id: `M001-${id}`, atualizado_em: EPOCA, planta_id: id, data: hoje, tipo: "revisao",
           produto: null, dose_g_l: null, volume_ml: null,
           observacao: `Reclassificada do antigo Grupo 4 para o Grupo ${g}.`
         });
       }
     }
+  },
+  {
+    // Fase 1: registros criados na Fase 0 não tinham hora de alteração. O que está igual à carga
+    // inicial recebe a "data zero"; o que o Wilson alterou recebe a hora atual (ganha na sincronização).
+    id: "M002-carimbo-de-alteracao",
+    async aplicar(banco) {
+      const carga = prepararCarga(seed);
+      const original: Record<string, Map<string, string>> = {};
+      const porChave = (linhas: object[], chave: string) =>
+        new Map(linhas.map((l) => [String((l as Record<string, unknown>)[chave]), estavel(l)]));
+      for (const [tabela, chave] of Object.entries(TABELAS_SYNC)) {
+        const linhas = tabela === "meta"
+          ? Object.entries(carga.meta).map(([c, valor]) => ({ chave: c, valor }))
+          : (carga[tabela as keyof Carga] as object[] | undefined) ?? [];
+        original[tabela] = porChave(linhas, chave);
+      }
+      const agora = new Date().toISOString();
+      for (const [tabela, chave] of Object.entries(TABELAS_SYNC)) {
+        const t = banco.table(tabela);
+        const semCarimbo = await t.filter((l) => !l.atualizado_em).toArray();
+        for (const l of semCarimbo) {
+          const k = String(l[chave]);
+          const igual = original[tabela].get(k) === estavel(l);
+          await t.update(k, { atualizado_em: igual ? EPOCA : agora });
+        }
+      }
+    }
   }
 ];
 
+/** JSON com as chaves em ordem, para comparar registros. */
+function estavel(v: unknown): string {
+  if (Array.isArray(v)) return `[${v.map(estavel).join(",")}]`;
+  if (v && typeof v === "object") {
+    return `{${Object.keys(v).filter((k) => k !== "atualizado_em").sort()
+      .map((k) => `${JSON.stringify(k)}:${estavel((v as Record<string, unknown>)[k])}`).join(",")}}`;
+  }
+  return JSON.stringify(v ?? null);
+}
+
 /** Roda as migrações que ainda não foram aplicadas neste aparelho. */
 export async function aplicarMigracoes(banco: BancoInventario) {
-  await banco.transaction("rw", banco.plantas, banco.eventos, banco.meta, async () => {
+  await banco.transaction("rw", Object.keys(TABELAS_SYNC).map((t) => banco.table(t)), async () => {
     const feitas = await lerMeta<string[]>(banco, "migracoes_aplicadas", []);
     for (const m of MIGRACOES) {
       if (feitas.includes(m.id)) continue;

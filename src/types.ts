@@ -9,9 +9,14 @@ export type StatusPlanta =
   | "dormencia_induzida"
   | "removida";
 
+/** Hora da última alteração (usada na sincronização com a planilha). */
+export interface Carimbo {
+  atualizado_em?: string;
+}
+
 export type ParamsOrigem = "inventario" | "sugerido" | "confirmado";
 
-export interface Planta {
+export interface Planta extends Carimbo {
   id: string;
   ficha: number | null;
   nome_popular: string;
@@ -40,7 +45,7 @@ export interface Planta {
   excluida_em: string | null;
 }
 
-export interface Foto {
+export interface Foto extends Carimbo {
   id: string;
   planta_id: string;
   data: string;
@@ -49,7 +54,7 @@ export interface Foto {
   nota_saude: number | null;
 }
 
-export interface Medicao {
+export interface Medicao extends Carimbo {
   id: string;
   planta_id: string;
   data_hora: string;
@@ -60,7 +65,7 @@ export interface Medicao {
   local_sonda: "colo" | "borda" | null;
 }
 
-export interface Evento {
+export interface Evento extends Carimbo {
   id: string;
   planta_id: string | null;
   data: string;
@@ -104,7 +109,7 @@ export const TIPOS_EVENTO: Record<string, string> = {
   revisao: "Revisão"
 };
 
-export interface Pendencia {
+export interface Pendencia extends Carimbo {
   id: string;
   planta_id: string | null;
   data_prevista: string;
@@ -112,7 +117,7 @@ export interface Pendencia {
   concluida_em: string | null;
 }
 
-export interface Projeto {
+export interface Projeto extends Carimbo {
   id: string;
   nome: string;
   plantas: string[];
@@ -120,7 +125,7 @@ export interface Projeto {
   proximo_marco: string | null;
 }
 
-export interface Insumo {
+export interface Insumo extends Carimbo {
   nome: string;
   categoria: string;
   em_estoque: boolean;
@@ -129,7 +134,7 @@ export interface Insumo {
   observacao: string | null;
 }
 
-export interface Desejo {
+export interface Desejo extends Carimbo {
   id: string;
   nome: string;
   especie: string | null;
@@ -140,13 +145,13 @@ export interface Desejo {
   observacao: string | null;
 }
 
-export interface Zona {
+export interface Zona extends Carimbo {
   id: string;
   nome: string;
   sol_direto: string | null;
 }
 
-export interface Regra {
+export interface Regra extends Carimbo {
   id: string;
   tipo: "bloquear" | "alertar";
   quando: Record<string, unknown>;
@@ -154,7 +159,7 @@ export interface Regra {
   ativa: boolean;
 }
 
-export interface Rotina {
+export interface Rotina extends Carimbo {
   id: string;
   nome: string;
   frequencia: string;
@@ -169,7 +174,7 @@ export interface Grupo {
 }
 
 /** Valores avulsos (próxima ficha, local, escalas...). */
-export interface Meta {
+export interface Meta extends Carimbo {
   chave: string;
   valor: unknown;
 }

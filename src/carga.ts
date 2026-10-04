@@ -1,5 +1,5 @@
 // Carga inicial (CLAUDE.md, seção 6) e numeração das fichas (seção 5).
-import { type BancoInventario, gravarMeta, lerMeta } from "./db";
+import { anotarExclusao, type BancoInventario, EPOCA, gravarMeta, lerMeta } from "./db";
 import { MIGRACOES } from "./migracoes";
 import type {
   Desejo, Evento, Grupo, Insumo, Pendencia, Planta, Projeto, Regra, Rotina, Zona
@@ -81,20 +81,23 @@ export function prepararCarga(seed: SeedJson): Carga {
 
 const TABELAS = [
   "plantas", "fotos", "medicoes", "eventos", "pendencias", "projetos",
-  "insumos", "lista_desejos", "zonas", "regras", "rotinas", "meta"
+  "insumos", "lista_desejos", "zonas", "regras", "rotinas", "meta", "apagados", "arquivos_fotos"
 ] as const;
 
+/** Linhas da carga com o carimbo "data zero": qualquer edição posterior é mais nova que elas. */
+const carimbar = <T extends object>(linhas: T[]): T[] => linhas.map((l) => ({ ...l, atualizado_em: EPOCA }));
+
 async function gravarCarga(banco: BancoInventario, carga: Carga) {
-  await banco.plantas.bulkAdd(carga.plantas);
-  await banco.lista_desejos.bulkAdd(carga.lista_desejos);
-  await banco.eventos.bulkAdd(carga.eventos);
-  await banco.pendencias.bulkAdd(carga.pendencias);
-  await banco.projetos.bulkAdd(carga.projetos);
-  await banco.zonas.bulkAdd(carga.zonas);
-  await banco.insumos.bulkAdd(carga.insumos);
-  await banco.regras.bulkAdd(carga.regras);
-  await banco.rotinas.bulkAdd(carga.rotinas);
-  await banco.meta.bulkAdd(Object.entries(carga.meta).map(([chave, valor]) => ({ chave, valor })));
+  await banco.plantas.bulkAdd(carimbar(carga.plantas));
+  await banco.lista_desejos.bulkAdd(carimbar(carga.lista_desejos));
+  await banco.eventos.bulkAdd(carimbar(carga.eventos));
+  await banco.pendencias.bulkAdd(carimbar(carga.pendencias));
+  await banco.projetos.bulkAdd(carimbar(carga.projetos));
+  await banco.zonas.bulkAdd(carimbar(carga.zonas));
+  await banco.insumos.bulkAdd(carimbar(carga.insumos));
+  await banco.regras.bulkAdd(carimbar(carga.regras));
+  await banco.rotinas.bulkAdd(carimbar(carga.rotinas));
+  await banco.meta.bulkAdd(carimbar(Object.entries(carga.meta).map(([chave, valor]) => ({ chave, valor }))));
   await gravarMeta(banco, "carga_importada_em", new Date().toISOString());
 }
 
@@ -166,7 +169,8 @@ export async function reativarPlanta(banco: BancoInventario, plantaId: string) {
 export async function excluirDefinitivamente(banco: BancoInventario, plantaId: string) {
   await banco.transaction(
     "rw",
-    [banco.plantas, banco.eventos, banco.medicoes, banco.fotos, banco.pendencias, banco.projetos, banco.meta],
+    [banco.plantas, banco.eventos, banco.medicoes, banco.fotos, banco.pendencias, banco.projetos, banco.meta,
+      banco.apagados, banco.arquivos_fotos],
     async () => {
       const planta = await banco.plantas.get(plantaId);
       if (!planta) return;
@@ -174,10 +178,13 @@ export async function excluirDefinitivamente(banco: BancoInventario, plantaId: s
         const excluidas = await lerMeta<number[]>(banco, "fichas_excluidas", []);
         await gravarMeta(banco, "fichas_excluidas", [...excluidas, planta.ficha]);
       }
-      await banco.eventos.where("planta_id").equals(plantaId).delete();
-      await banco.medicoes.where("planta_id").equals(plantaId).delete();
-      await banco.fotos.where("planta_id").equals(plantaId).delete();
-      await banco.pendencias.where("planta_id").equals(plantaId).delete();
+      for (const tabela of ["eventos", "medicoes", "fotos", "pendencias"] as const) {
+        const ids = (await banco[tabela].where("planta_id").equals(plantaId).primaryKeys()) as string[];
+        for (const id of ids) await anotarExclusao(banco, tabela, id);
+        await banco[tabela].bulkDelete(ids);
+        if (tabela === "fotos") await banco.arquivos_fotos.bulkDelete(ids);
+      }
+      await anotarExclusao(banco, "plantas", plantaId);
       await banco.projetos.toCollection().modify((pr) => {
         pr.plantas = pr.plantas.filter((id) => id !== plantaId);
       });
