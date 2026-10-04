@@ -105,6 +105,7 @@ export const TIPOS_EVENTO: Record<string, string> = {
   reposicionamento: "Mudança de lugar",
   chegada: "Chegada",
   observacao: "Observação",
+  checkup: "Check-up (IA)",
   decisao: "Decisão",
   revisao: "Revisão"
 };

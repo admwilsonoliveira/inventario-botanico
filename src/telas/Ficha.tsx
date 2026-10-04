@@ -107,6 +107,7 @@ export function Ficha({ id }: { id: string }) {
           <a href={`#/planta/${id}/registrar/outro`}><span>📝</span>Outro</a>
         </nav>
       )}
+      {!removida && <a className="botao secundario largo checkup sem-impressao" href={`#/escanear/${id}`}>🩺 Check-up com IA (fotos + laudo)</a>}
 
       {medicao && (
         <section className="cartao">

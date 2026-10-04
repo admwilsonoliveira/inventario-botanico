@@ -76,13 +76,13 @@ export async function reduzirImagem(arquivo: Blob, lado: number, qualidade = 0.8
 }
 
 /** Guarda a foto: o original espera o envio ao Drive; a miniatura fica no aparelho para exibir. */
-export async function salvarFoto(banco: BancoInventario, plantaId: string, tipo: number, arquivo: File) {
+export async function salvarFoto(banco: BancoInventario, plantaId: string, tipo: number, arquivo: Blob, nota: number | null = null, comEvento = true) {
   const id = crypto.randomUUID();
   const miniatura = await reduzirImagem(arquivo, 480, 0.75);
   await banco.transaction("rw", banco.fotos, banco.arquivos_fotos, banco.eventos, async () => {
     await banco.arquivos_fotos.add({ id, original: arquivo, miniatura });
-    await banco.fotos.add({ id, planta_id: plantaId, data: new Date().toISOString(), tipo, arquivo_drive_id: null, nota_saude: null });
-    await banco.eventos.add({
+    await banco.fotos.add({ id, planta_id: plantaId, data: new Date().toISOString(), tipo, arquivo_drive_id: null, nota_saude: nota });
+    if (comEvento) await banco.eventos.add({
       id: crypto.randomUUID(), planta_id: plantaId, data: hojeISO(), tipo: "foto",
       produto: null, dose_g_l: null, volume_ml: null, observacao: `Foto: ${TIPOS_FOTO[tipo]?.nome ?? tipo}.`
     });

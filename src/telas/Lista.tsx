@@ -53,6 +53,10 @@ export function Lista() {
   return (
     <>
       <h1>Plantas</h1>
+      <div className="botoes">
+        <a className="botao" href="#/planta/nova">+ Nova planta</a>
+        <a className="botao secundario" href="#/desejos">⭐ Desejos</a>
+      </div>
       <input
         className="busca" type="search" placeholder="Buscar por nome ou nº da ficha"
         value={busca} onChange={(e) => setBusca(e.target.value)}

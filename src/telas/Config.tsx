@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
-import { db, gravarConfig, lerMeta } from "../db";
+import { db, gravarConfig, lerConfig, lerMeta } from "../db";
+import { lerUsoIA, type UsoIA } from "../ia";
+import { LIMIAR_NITIDEZ_PADRAO } from "../nitidez";
 import { restaurarCarga } from "../carga";
 import { formatarData } from "../formato";
 import { ir } from "../rotas";
@@ -80,6 +82,51 @@ function SecaoNuvem() {
   );
 }
 
+function SecaoIA() {
+  const [uso, setUso] = useState<UsoIA | null>(null);
+  const [erro, setErro] = useState<string | null>(null);
+  const [carregando, setCarregando] = useState(false);
+  const limiar = useLiveQuery(() => lerConfig<number>(db, "limiar_nitidez", LIMIAR_NITIDEZ_PADRAO), [], LIMIAR_NITIDEZ_PADRAO);
+  const [texto, setTexto] = useState<string | null>(null);
+
+  async function ver() {
+    setCarregando(true);
+    setErro(null);
+    try {
+      setUso(await lerUsoIA(db));
+    } catch (e) {
+      setErro((e as Error).message);
+    } finally {
+      setCarregando(false);
+    }
+  }
+
+  return (
+    <section className="cartao">
+      <h2>Escaneamento e IA</h2>
+      <p className="ajuda">As IAs só são chamadas quando você toca em "Identificar" ou "Analisar". Ao chegar a 80% da cota grátis do dia, o app para de chamar.</p>
+      <button className="botao secundario largo" disabled={carregando} onClick={ver}>{carregando ? "Consultando…" : "Ver uso de hoje"}</button>
+      {erro && <div className="aviso erro">{erro}</div>}
+      {uso && (
+        <dl>
+          <div className="linha-dado"><dt>Pl@ntNet</dt><dd>{uso.plantnet.usado} de {uso.plantnet.teto} (limite {uso.plantnet.limite})</dd></div>
+          <div className="linha-dado"><dt>Gemini ({uso.modelo})</dt><dd>{uso.gemini.usado} de {uso.gemini.teto} (limite {uso.gemini.limite})</dd></div>
+          {uso.gemini.tokens > 0 && <div className="linha-dado"><dt>Tokens do Gemini hoje</dt><dd>{uso.gemini.tokens.toLocaleString("pt-BR")}</dd></div>}
+        </dl>
+      )}
+      <label className="linha-campo">Nitidez mínima das fotos
+        <input inputMode="numeric" value={texto ?? String(limiar)} onChange={(e) => setTexto(e.target.value)}
+          onBlur={async () => {
+            const n = Number(texto);
+            if (texto !== null && Number.isFinite(n) && n >= 0) await gravarConfig(db, "limiar_nitidez", n);
+            setTexto(null);
+          }} />
+      </label>
+      <p className="ajuda">Se fotos boas forem recusadas, diminua; se fotos tremidas passarem, aumente. Cada recusa mostra a nitidez medida.</p>
+    </section>
+  );
+}
+
 function ItemRegra({ r }: { r: Regra }) {
   const [texto, setTexto] = useState(r.mensagem);
   const [editando, setEditando] = useState(false);
@@ -154,6 +201,12 @@ export function Config() {
       <h1>Configurações</h1>
 
       <SecaoNuvem />
+      <SecaoIA />
+
+      <section className="cartao">
+        <h2>Etiquetas QR</h2>
+        <a className="botao secundario largo" href="#/etiquetas">🏷️ Imprimir etiquetas</a>
+      </section>
 
       <section className="cartao">
         <h2>Exportar para Excel</h2>

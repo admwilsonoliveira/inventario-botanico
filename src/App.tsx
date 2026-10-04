@@ -16,6 +16,8 @@ import { Etiquetas } from "./telas/Etiquetas";
 import { Config } from "./telas/Config";
 import { Registrar, type TipoRegistro } from "./telas/Registrar";
 import { Historico, Hoje, NovaPendencia } from "./telas/Hoje";
+import { Escanear } from "./telas/Escanear";
+import { Desejos, NovaPlanta } from "./telas/Desejos";
 
 const TIPOS_REGISTRO: TipoRegistro[] = ["rega", "adubacao", "medicao", "foto", "outro"];
 
@@ -48,12 +50,15 @@ export function App() {
 
   const [secao, id, acao, tipo] = rota;
   let tela;
-  if (secao === "planta" && id && acao === "editar") tela = <Editar id={id} />;
+  if (secao === "planta" && id === "nova") tela = <NovaPlanta />;
+  else if (secao === "planta" && id && acao === "editar") tela = <Editar id={id} />;
   else if (secao === "planta" && id && acao === "registrar" && TIPOS_REGISTRO.includes(tipo as TipoRegistro)) {
     tela = <Registrar key={`${id}-${tipo}`} plantaId={id} tipo={tipo as TipoRegistro} />;
   } else if (secao === "planta" && id) tela = <Ficha id={id} />;
   else if (secao === "registrar") tela = <Registrar plantaId={null} tipo="outro" />;
   else if (secao === "pendencia" && id === "nova") tela = <NovaPendencia plantaId={acao ?? null} />;
+  else if (secao === "escanear") tela = <Escanear key={id ?? "novo"} plantaId={id ?? null} />;
+  else if (secao === "desejos") tela = <Desejos />;
   else if (secao === "hoje") tela = <Hoje />;
   else if (secao === "historico") tela = <Historico />;
   else if (secao === "revisao") tela = <Revisao />;
@@ -61,7 +66,7 @@ export function App() {
   else if (secao === "config") tela = <Config />;
   else tela = <Lista />;
 
-  const atual = !secao || secao === "planta" ? "" : ["registrar", "pendencia", "historico"].includes(secao) ? "hoje" : secao;
+  const atual = !secao || secao === "planta" || secao === "desejos" ? "" : ["registrar", "pendencia", "historico"].includes(secao) ? "hoje" : secao === "etiquetas" ? "config" : secao;
   const ativa = (s: string) => (atual === s ? "ativa" : "");
 
   return (
@@ -73,10 +78,10 @@ export function App() {
         <a href="#/hoje" className={ativa("hoje")}>
           <span>📅{qtdHoje > 0 && <b className="bolinha">{qtdHoje}</b>}</span>Hoje
         </a>
+        <a href="#/escanear" className={ativa("escanear")}><span>📷</span>Escanear</a>
         <a href="#/revisao" className={ativa("revisao")}>
           <span>📝{qtdRevisao > 0 && <b className="bolinha">{qtdRevisao}</b>}</span>Revisão
         </a>
-        <a href="#/etiquetas" className={ativa("etiquetas")}><span>🏷️</span>Etiquetas</a>
         <a href="#/config" className={ativa("config")}><span>⚙️</span>Config.</a>
       </nav>
     </>
