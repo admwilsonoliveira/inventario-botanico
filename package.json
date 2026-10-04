@@ -15,7 +15,8 @@
     "dexie-react-hooks": "^4.4.0",
     "qrcode": "^1.5.4",
     "react": "^19.3.0",
-    "react-dom": "^19.3.0"
+    "react-dom": "^19.3.0",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   },
   "devDependencies": {
     "@types/qrcode": "^1.5.6",
