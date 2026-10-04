@@ -107,7 +107,8 @@ export class BancoInventario extends Dexie {
         const campos = Object.keys(m).filter((k) => JSON.stringify(m[k]) !== JSON.stringify(a[k]));
         if (campos.length === 0) return; // nada mudou de fato
         this.avisar();
-        if (!campos.includes("atualizado_em")) return { atualizado_em: new Date().toISOString() };
+        // só mantém o carimbo se ele veio junto (dados da planilha); senão, é edição daqui: hora atual
+        if (!campos.includes("atualizado_em") || !m.atualizado_em) return { atualizado_em: new Date().toISOString() };
       });
       t.hook("deleting", () => this.avisar());
     }

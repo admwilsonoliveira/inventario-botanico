@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
+import Dexie from "dexie";
 import seedJson from "../seed/inventario_inicial.json";
 import { BancoInventario, EPOCA, gravarMeta, lerMeta } from "./db";
 import { carregarSeVazio, excluirDefinitivamente, type SeedJson } from "./carga";
@@ -24,17 +25,21 @@ async function simularBancoAntigo() {
 
 describe("M002 — carimbo de alteração dos dados da Fase 0", () => {
   it("o que é igual à carga fica com a data zero; o que foi editado fica com a hora atual", async () => {
-    // simula a Fase 0: nada tinha carimbo
-    for (const t of ["plantas", "eventos", "meta"]) {
-      await banco.table(t).toCollection().modify((l: Record<string, unknown>) => { delete l.atualizado_em; });
-    }
-    await banco.plantas.toCollection().modify((p) => {
-      if (p.id === "P02") p.objetivo = "teste";
-      delete p.atualizado_em;
-    });
-    await banco.eventos.add({ id: "uuid-revisao", planta_id: "P06", data: "2026-10-04", tipo: "revisao", produto: null, dose_g_l: null, volume_ml: null, observacao: "ok" });
-    await banco.eventos.toCollection().modify((e) => { delete e.atualizado_em; });
+    // simula a Fase 0 (nada tinha carimbo), abrindo o mesmo banco "por fora", sem os ganchos do app
     await gravarMeta(banco, "migracoes_aplicadas", ["M001-nomes-dos-grupos"]);
+    banco.close();
+    const cru = new Dexie(banco.name);
+    await cru.open();
+    for (const t of ["plantas", "eventos", "meta"]) {
+      await cru.table(t).toCollection().modify((l: Record<string, unknown>) => {
+        if (l.chave === "migracoes_aplicadas") return;
+        delete l.atualizado_em;
+        if (l.id === "P02") l.objetivo = "teste";
+      });
+    }
+    await cru.table("eventos").add({ id: "uuid-revisao", planta_id: "P06", data: "2026-10-04", tipo: "revisao", produto: null, dose_g_l: null, volume_ml: null, observacao: "ok" });
+    cru.close();
+    await banco.open();
 
     await aplicarMigracoes(banco);
 
