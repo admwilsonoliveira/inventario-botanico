@@ -117,3 +117,13 @@ describe("clima", () => {
     })).toBe("agora 29 °C; umidade do ar 31%; próximos 7 dias: máximas até 33 °C, mínimas de 15 °C; chuva prevista 12 mm.");
   });
 });
+
+describe("leitura do visor do medidor", () => {
+  it("valores ilegíveis (-1) ou fora da escala viram vazio", async () => {
+    const { normalizarLeitura } = await import("./ia");
+    expect(normalizarLeitura({ umidade: 2.4, ph: 6.5, luz: -1, temperatura: 27, observacao: "" }))
+      .toEqual({ umidade: 2, ph: 6.5, luz: null, temperatura: 27, observacao: "" });
+    expect(normalizarLeitura({ umidade: 7, ph: 14, luz: 9, temperatura: 90, observacao: "reflexo" }))
+      .toEqual({ umidade: null, ph: null, luz: 9, temperatura: null, observacao: "reflexo" });
+  });
+});

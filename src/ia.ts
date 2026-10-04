@@ -3,6 +3,7 @@ import type { BancoInventario } from "./db";
 import { avaliar, type Disparo } from "./regras";
 import { blobParaBase64, chamar, lerConfigNuvem } from "./sync";
 import type { Evento, Grupo, Insumo, Medicao, Planta, Regra } from "./types";
+import type { Previsao } from "./rotina";
 
 // ---------- Tipos ----------
 
@@ -350,4 +351,77 @@ export async function lerUsoIA(banco: BancoInventario): Promise<UsoIA> {
   const cfg = await nuvem(banco);
   const r = await chamar(cfg, { acao: "uso_ia" }, 30_000);
   return r.uso as UsoIA;
+}
+
+// ---------- Previsão para os alertas de clima (Fase 3) ----------
+
+let previsaoGuardada: { em: number; valor: Previsao } | null = null;
+
+/** Últimos 7 dias + próximos 7 em Patrocínio. Guardada por 1 hora; sem internet devolve null. */
+export async function previsaoPatrocinio(): Promise<Previsao | null> {
+  if (previsaoGuardada && Date.now() - previsaoGuardada.em < 3_600_000) return previsaoGuardada.valor;
+  try {
+    const url = "https://api.open-meteo.com/v1/forecast?latitude=-18.94&longitude=-46.99" +
+      "&daily=temperature_2m_max,relative_humidity_2m_min,precipitation_sum" +
+      "&timezone=America%2FSao_Paulo&past_days=7&forecast_days=7";
+    const r = await fetch(url);
+    if (!r.ok) return null;
+    const j = await r.json();
+    const d = j.daily;
+    const valor: Previsao = {
+      datas: d.time, tmax: d.temperature_2m_max, umidadeMin: d.relative_humidity_2m_min,
+      chuva: (d.precipitation_sum as (number | null)[]).map((x) => x ?? 0), diasPassados: 7
+    };
+    previsaoGuardada = { em: Date.now(), valor };
+    return valor;
+  } catch {
+    return null;
+  }
+}
+
+// ---------- Leitura do visor do medidor por foto (Fase 3) ----------
+
+export interface LeituraVisor {
+  umidade: number;
+  ph: number;
+  luz: number;
+  temperatura: number;
+  observacao: string;
+}
+
+export const ESQUEMA_VISOR = obj({ umidade: N, ph: N, luz: N, temperatura: N, observacao: S });
+
+export const INSTRUCOES_VISOR = [
+  "A foto mostra o visor de um medidor de solo 4-em-1 (umidade, pH, luz e temperatura).",
+  "Leia os valores que aparecem no visor. Escalas: umidade de 1 (muito seco) a 5 (muito molhado); pH de 3,5 a 9; luz de 1 a 9; temperatura em °C.",
+  "Se o ponteiro estiver entre duas marcas, use uma casa decimal.",
+  "Use -1 para qualquer valor que não dê para ler com segurança. Em observacao, diga em português o que ficou duvidoso (ou deixe vazio).",
+  "Responda SOMENTE com o objeto JSON."
+].join("\n");
+
+/** Converte a leitura da IA: -1 (ilegível) vira null; fora da escala também. */
+export function normalizarLeitura(l: LeituraVisor): { umidade: number | null; ph: number | null; luz: number | null; temperatura: number | null; observacao: string } {
+  const faixa = (v: number, min: number, max: number) => (typeof v === "number" && v >= min && v <= max ? v : null);
+  const um = faixa(l.umidade, 1, 5);
+  const luz = faixa(l.luz, 1, 9);
+  return {
+    umidade: um === null ? null : Math.round(um),
+    ph: faixa(l.ph, 3, 10),
+    luz: luz === null ? null : Math.round(luz),
+    temperatura: faixa(l.temperatura, -5, 60),
+    observacao: l.observacao ?? ""
+  };
+}
+
+export async function lerVisor(banco: BancoInventario, foto: Blob) {
+  const reduzida = await reduzir(foto);
+  const r = await analisarFotos<LeituraVisor>(
+    banco, INSTRUCOES_VISOR, [{ tipo: 7, original: foto, reduzida, nitidez: 0 }], ESQUEMA_VISOR
+  );
+  return normalizarLeitura(r);
+}
+
+async function reduzir(foto: Blob): Promise<Blob> {
+  const { reduzirImagem } = await import("./registro");
+  return reduzirImagem(foto, 1568, 0.8);
 }

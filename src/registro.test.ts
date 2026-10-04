@@ -59,3 +59,21 @@ describe("conferir evento antes de salvar", () => {
     expect(d2.map((x) => x.regra.id)).not.toContain("R01");
   });
 });
+
+describe("baixa automática de estoque ao salvar", () => {
+  it("adubação com Ouro Verde (30 g) desconta e avisa; acabando, marca sem estoque", async () => {
+    const { salvarEvento } = await import("./registro");
+    const b = new BancoInventario("estoque");
+    await b.open();
+    await carregarSeVazio(b, seedJson as unknown as SeedJson);
+    const nome = "Ouro Verde 15-15-20 (pó solúvel)";
+    const base = { planta_id: "P35", data: "2026-10-04", tipo: "adubacao", produto: nome, observacao: null };
+    const aviso = await salvarEvento(b, { ...base, dose_g_l: 1, volume_ml: 2000 });
+    expect(aviso).toMatch(/28 g/);
+    expect((await b.insumos.get(nome))!.quantidade).toBe(28);
+    const fim = await salvarEvento(b, { ...base, dose_g_l: 2, volume_ml: 20_000 });
+    expect(fim).toMatch(/acabou/);
+    expect((await b.insumos.get(nome))!.em_estoque).toBe(false);
+    expect(await salvarEvento(b, { ...base, produto: "Pó de basalto", dose_g_l: 1, volume_ml: 500 })).toBeNull();
+  });
+});

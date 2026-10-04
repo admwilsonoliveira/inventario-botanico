@@ -1,6 +1,7 @@
 // Registro rápido (reguei, adubei, medi, fotografei), medição e pendências.
 import { anotarExclusao, type BancoInventario } from "./db";
 import { avaliar, type Disparo } from "./regras";
+import { calcularBaixa } from "./rotina";
 import type { Evento, Medicao, Pendencia, Planta } from "./types";
 
 export const hojeISO = () => new Date().toLocaleDateString("sv-SE", { timeZone: "America/Sao_Paulo" });
@@ -48,10 +49,28 @@ export async function conferirEvento(banco: BancoInventario, evento: Partial<Eve
   return avaliar(regras, { evento, planta, historico });
 }
 
-export async function salvarEvento(banco: BancoInventario, evento: Omit<Evento, "id">) {
+/**
+ * Salva o evento e, se ele usa um insumo com quantidade controlada (g/kg) e tem dose e volume,
+ * dá baixa no estoque. Devolve um aviso sobre o estoque (ou null).
+ */
+export async function salvarEvento(banco: BancoInventario, evento: Omit<Evento, "id">): Promise<string | null> {
   const id = crypto.randomUUID();
-  await banco.eventos.add({ ...evento, id });
-  return id;
+  let aviso: string | null = null;
+  await banco.transaction("rw", banco.eventos, banco.insumos, async () => {
+    await banco.eventos.add({ ...evento, id });
+    if (!evento.produto) return;
+    const insumo = await banco.insumos.get(evento.produto);
+    if (!insumo) return;
+    const baixa = calcularBaixa(insumo, evento);
+    if (!baixa) return;
+    const acabou = baixa.quantidade <= 0;
+    await banco.insumos.update(insumo.nome, { quantidade: baixa.quantidade, ...(acabou ? { em_estoque: false } : {}) });
+    const f = (n: number) => String(n).replace(".", ",");
+    aviso = acabou
+      ? `${insumo.nome} acabou: marcado como sem estoque (precisa comprar).`
+      : `Estoque de ${insumo.nome}: ${f(baixa.quantidade)} ${insumo.unidade} (saíram ${f(baixa.gasto)}).`;
+  });
+  return aviso;
 }
 
 export async function apagarEvento(banco: BancoInventario, id: string) {
