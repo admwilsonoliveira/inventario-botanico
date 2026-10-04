@@ -1,13 +1,57 @@
+import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db, lerMeta } from "../db";
-import { confirmarRevisao, precisaRevisao, removerPlanta } from "../carga";
+import { confirmarRevisao, numerarPendentes, planejarNumeracao, precisaRevisao, removerPlanta } from "../carga";
+import { avisar } from "../aviso";
+import type { Planta } from "../types";
 import { compararFichas } from "../formato";
 import { CampoFicha, NumeroFicha } from "../componentes";
 import { STATUS_ROTULO } from "../types";
 
+/** Numera de uma vez todas as fichas pendentes, com confirmação mostrando o que vai acontecer. */
+function NumerarTodas({ plantas, excluidas }: { plantas: Planta[]; excluidas: number[] }) {
+  const [confirmando, setConfirmando] = useState(false);
+  const plano = planejarNumeracao(plantas, excluidas);
+  const nomes = new Map(plantas.map((p) => [p.id, p.nome_popular]));
+  const faixa = (() => {
+    const ns = plano.map((p) => p.ficha);
+    return ns.length ? `nº ${Math.min(...ns)} a nº ${Math.max(...ns)}` : "";
+  })();
+
+  async function aplicar() {
+    const qtd = await numerarPendentes(db);
+    setConfirmando(false);
+    avisar(`✔ ${qtd} fichas numeradas`);
+  }
+
+  if (!confirmando) {
+    return <button className="botao largo" onClick={() => setConfirmando(true)}>🔢 Numerar todas automaticamente ({plano.length})</button>;
+  }
+  return (
+    <div className="cartao destaque">
+      <p>
+        <b>{plano.length} fichas</b> vão receber os números livres ({faixa}), em ordem de grupo.
+        Números já usados e de fichas excluídas ficam de fora. <b>Os números não vão bater com a planilha antiga.</b>
+      </p>
+      <details>
+        <summary>Ver como fica</summary>
+        <ul className="lista-simples">
+          {plano.map((p) => <li key={p.id}>nº {p.ficha} — {nomes.get(p.id)}</li>)}
+        </ul>
+      </details>
+      <p className="ajuda">Faça isto em um aparelho só; o outro recebe pela sincronização.</p>
+      <div className="botoes">
+        <button className="botao secundario" onClick={() => setConfirmando(false)}>Cancelar</button>
+        <button className="botao" onClick={aplicar}>Numerar</button>
+      </div>
+    </div>
+  );
+}
+
 export function Revisao() {
   const plantas = useLiveQuery(() => db.plantas.toArray().then((l) => l.sort(compararFichas)), []);
   const obsNumeracao = useLiveQuery(() => lerMeta<string | null>(db, "observacao_numeracao", null), []);
+  const excluidas = useLiveQuery(() => lerMeta<number[]>(db, "fichas_excluidas", []), []);
 
   if (!plantas) return null;
   const ativas = plantas.filter((p) => p.status !== "removida");
@@ -44,8 +88,9 @@ export function Revisao() {
       ))}
 
       <h2 className="titulo-secao">2. Números de ficha que faltam ({semNumero.length})</h2>
-      {obsNumeracao && <p className="ajuda">{obsNumeracao}</p>}
       {semNumero.length === 0 && <p className="ok">✔ Todas as fichas têm número.</p>}
+      {semNumero.length > 0 && <NumerarTodas plantas={plantas} excluidas={excluidas ?? []} />}
+      {obsNumeracao && semNumero.length > 0 && <p className="ajuda">{obsNumeracao}</p>}
       <ul className="lista-fichas">
         {semNumero.map((p) => (
           <li key={p.id}>

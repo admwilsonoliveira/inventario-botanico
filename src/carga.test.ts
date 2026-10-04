@@ -2,8 +2,8 @@ import { beforeEach, describe, expect, it } from "vitest";
 import seedJson from "../seed/inventario_inicial.json";
 import { BancoInventario, lerMeta } from "./db";
 import {
-  carregarSeVazio, confirmarRevisao, definirFicha, excluirDefinitivamente, precisaRevisao,
-  prepararCarga, removerPlanta, reservarProximaFicha, restaurarCarga, type SeedJson, validarFicha
+  carregarSeVazio, confirmarRevisao, definirFicha, excluirDefinitivamente, numerarPendentes, planejarNumeracao,
+  precisaRevisao, prepararCarga, removerPlanta, reservarProximaFicha, restaurarCarga, type SeedJson, validarFicha
 } from "./carga";
 
 const seed = seedJson as unknown as SeedJson;
@@ -109,6 +109,43 @@ describe("numeração das fichas", () => {
     await excluirDefinitivamente(banco, "P31");
     expect(await validarFicha(banco, "P01", 47)).toMatch(/excluída/);
     await expect(definirFicha(banco, "P01", 47)).rejects.toThrow();
+  });
+});
+
+describe("numeração automática", () => {
+  beforeEach(() => carregarSeVazio(banco, seed));
+
+  it("preenche os números livres, sem repetir e sem reaproveitar ficha excluída", async () => {
+    await definirFicha(banco, "P02", 1); // já numerada à mão
+    await removerPlanta(banco, "P31");
+    await excluirDefinitivamente(banco, "P31"); // ficha 47 nunca mais
+    await removerPlanta(banco, "P46"); // removida: não recebe número
+
+    const qtd = await numerarPendentes(banco);
+    const plantas = await banco.plantas.toArray();
+    const ativas = plantas.filter((p) => p.status !== "removida");
+    expect(ativas.every((p) => p.ficha !== null)).toBe(true);
+    expect((await banco.plantas.get("P46"))!.ficha).toBeNull();
+    expect((await banco.plantas.get("P02"))!.ficha).toBe(1);
+    expect((await banco.plantas.get("P01"))!.ficha).toBe(2); // grupo 1, primeiro livre depois do 1
+    const numeros = ativas.map((p) => p.ficha);
+    expect(new Set(numeros).size).toBe(numeros.length);
+    expect(numeros).not.toContain(47);
+    expect(qtd).toBe(ativas.length - 6); // P02 + as 5 que já vieram numeradas (48–52)
+    const maior = Math.max(...(numeros as number[]));
+    expect(await lerMeta(banco, "proxima_ficha", 0)).toBe(maior + 1);
+  });
+
+  it("segue a ordem dos grupos", () => {
+    const plano = planejarNumeracao(
+      [
+        { id: "P10", ficha: null, grupo: 2, status: "ativa" },
+        { id: "P2", ficha: null, grupo: 1, status: "ativa" },
+        { id: "P9", ficha: 1, grupo: 1, status: "ativa" }
+      ],
+      []
+    );
+    expect(plano).toEqual([{ id: "P2", ficha: 2 }, { id: "P10", ficha: 3 }]);
   });
 });
 

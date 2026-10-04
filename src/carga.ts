@@ -144,6 +144,42 @@ export async function definirFicha(banco: BancoInventario, plantaId: string, num
   });
 }
 
+/**
+ * Plano de numeração automática: cada planta sem número (fora as removidas), em ordem de grupo e código,
+ * recebe o menor número livre — nunca um já usado nem um de ficha excluída. Função pura.
+ */
+export function planejarNumeracao(
+  plantas: Pick<Planta, "id" | "ficha" | "grupo" | "status">[],
+  excluidas: number[]
+): { id: string; ficha: number }[] {
+  const ocupados = new Set<number>([...excluidas, ...plantas.filter((p) => p.ficha !== null).map((p) => p.ficha!)]);
+  const pendentes = plantas
+    .filter((p) => p.ficha === null && p.status !== "removida")
+    .sort((a, b) => (a.grupo ?? 99) - (b.grupo ?? 99) || a.id.localeCompare(b.id, "pt-BR", { numeric: true }));
+  const plano: { id: string; ficha: number }[] = [];
+  let n = 1;
+  for (const p of pendentes) {
+    while (ocupados.has(n)) n++;
+    plano.push({ id: p.id, ficha: n });
+    ocupados.add(n);
+  }
+  return plano;
+}
+
+/** Aplica a numeração automática e avança a próxima ficha. Devolve quantas fichas foram numeradas. */
+export async function numerarPendentes(banco: BancoInventario): Promise<number> {
+  return banco.transaction("rw", banco.plantas, banco.meta, async () => {
+    const plano = planejarNumeracao(await banco.plantas.toArray(), await lerMeta<number[]>(banco, "fichas_excluidas", []));
+    for (const { id, ficha } of plano) await banco.plantas.update(id, { ficha });
+    if (plano.length) {
+      const maior = Math.max(...plano.map((p) => p.ficha));
+      const proxima = await lerMeta<number>(banco, "proxima_ficha", 1);
+      if (maior >= proxima) await gravarMeta(banco, "proxima_ficha", maior + 1);
+    }
+    return plano.length;
+  });
+}
+
 /** Reserva o próximo número de ficha para uma planta nova. */
 export async function reservarProximaFicha(banco: BancoInventario): Promise<number> {
   return banco.transaction("rw", banco.meta, async () => {
