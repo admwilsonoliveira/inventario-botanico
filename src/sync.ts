@@ -24,7 +24,7 @@ const NUMEROS: Partial<Record<TabelaSync, string[]>> = {
   plantas: ["ficha", "grupo", "quantidade", "ph_min", "ph_max", "rega_gatilho_min", "rega_gatilho_max"],
   fotos: ["tipo", "nota_saude"],
   medicoes: ["umidade", "ph", "luz", "temperatura"],
-  eventos: ["dose_g_l", "volume_ml", "percentual_area_foliar"],
+  eventos: ["dose_g_l", "volume_ml", "percentual_area_foliar", "tentadas", "pegaram"],
   insumos: ["quantidade"],
   lista_desejos: ["preco_alvo"],
   rotinas: ["mes"]
@@ -38,7 +38,11 @@ export function normalizarRemoto(tabela: TabelaSync, r: Registro): Registro {
     if (v === "" || v === undefined) out[c] = null;
     else if (typeof v === "string" && v.trim() !== "" && !Number.isNaN(Number(v.replace(",", ".")))) out[c] = Number(v.replace(",", "."));
   }
-  for (const c of ["tags", "proibicoes", "alertas", "plantas", "insumos"]) {
+  for (const c of ["tags", "proibicoes", "alertas", "plantas", "insumos", "marcos"]) {
+    // listas que a planilha devolveu como texto JSON
+    if (typeof out[c] === "string" && (out[c] as string).trim().startsWith("[")) {
+      try { out[c] = JSON.parse(out[c] as string); } catch { /* fica como veio */ }
+    }
     if (c in out && out[c] === null && ["plantas", "projetos", "eventos"].includes(tabela)) out[c] = [];
   }
   if (tabela === "plantas" && out.historico === null) out.historico = "";

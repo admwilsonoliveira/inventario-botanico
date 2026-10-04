@@ -166,3 +166,12 @@ describe("ajustes dos dados vindos da planilha", () => {
     expect(mesclarMeta("ultimo_id_planta", "P63", "P65")).toBeNull();
   });
 });
+
+describe("listas guardadas como texto na planilha", () => {
+  it("marcos do projeto voltam como lista", () => {
+    const r = normalizarRemoto("projetos", { id: "PR01", plantas: '["P41"]', marcos: '[{"data":"2026-10-20","texto":"Fase: A → B"}]' });
+    expect(r.plantas).toEqual(["P41"]);
+    expect(r.marcos).toEqual([{ data: "2026-10-20", texto: "Fase: A → B" }]);
+    expect(normalizarRemoto("eventos", { id: "E", tentadas: "3", pegaram: "2" })).toMatchObject({ tentadas: 3, pegaram: 2 });
+  });
+});

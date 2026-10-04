@@ -26,7 +26,7 @@ const CHAVES = {
 };
 
 // Colunas guardadas como texto JSON (listas e objetos)
-const COLUNAS_JSON = ["tags", "proibicoes", "alertas", "plantas", "insumos", "meses", "quando", "valor"];
+const COLUNAS_JSON = ["tags", "proibicoes", "alertas", "plantas", "insumos", "meses", "quando", "valor", "marcos"];
 // Colunas de sim/não
 const COLUNAS_SIM_NAO = ["em_estoque", "ativa"];
 

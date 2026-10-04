@@ -82,6 +82,11 @@ export interface Evento extends Carimbo {
   insumos?: string[];
   /** Poda: percentual da área foliar removida. */
   percentual_area_foliar?: number | null;
+  /** Propagação (resultado): quantas foram tentadas e quantas pegaram. */
+  tentadas?: number | null;
+  pegaram?: number | null;
+  /** Propagação (resultado): espécie, para a taxa por espécie. */
+  especie?: string | null;
 }
 
 export const TIPOS_EVENTO: Record<string, string> = {
@@ -107,7 +112,10 @@ export const TIPOS_EVENTO: Record<string, string> = {
   observacao: "Observação",
   checkup: "Check-up (IA)",
   decisao: "Decisão",
-  revisao: "Revisão"
+  revisao: "Revisão",
+  marco: "Marco de projeto",
+  propagacao_resultado: "Resultado da propagação",
+  consulta: "Consulta (IA)"
 };
 
 export interface Pendencia extends Carimbo {
@@ -124,6 +132,8 @@ export interface Projeto extends Carimbo {
   plantas: string[];
   fase_atual: string | null;
   proximo_marco: string | null;
+  /** Fase 4: histórico de fases e marcos atingidos. */
+  marcos?: { data: string; texto: string }[];
 }
 
 export interface Insumo extends Carimbo {

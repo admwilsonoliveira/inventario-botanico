@@ -18,7 +18,7 @@ const TITULOS: Record<TipoRegistro, string> = {
 };
 
 // tipos que aparecem em "Outro registro" (os demais têm botão próprio)
-const TIPOS_OUTRO = Object.keys(TIPOS_EVENTO).filter((t) => !["rega", "adubacao", "medicao", "foto", "revisao", "checkup"].includes(t));
+const TIPOS_OUTRO = Object.keys(TIPOS_EVENTO).filter((t) => !["rega", "adubacao", "medicao", "foto", "revisao", "checkup", "marco", "propagacao_resultado", "consulta"].includes(t));
 const COM_INSUMOS = ["transplante", "renovacao_substrato", "plantio", "propagacao"];
 const COM_PERCENTUAL = ["poda", "poda_estrutural"];
 
