@@ -113,7 +113,7 @@ const PROTOCOLOS = [
 ];
 
 export interface ContextoIA {
-  modo: "ficha" | "checkup";
+  modo: "ficha" | "checkup" | "consulta";
   candidato?: Candidato | null;
   planta?: Planta | null;
   grupos: Grupo[];
@@ -123,6 +123,9 @@ export interface ContextoIA {
   medicao?: Medicao | null;
   eventos?: Evento[];
   tiposFotos: number[];
+  /** Consulta: pergunta atual e conversa anterior. */
+  pergunta?: string;
+  conversa?: { pergunta: string; resposta: string }[];
 }
 
 const NOMES_FOTOS: Record<number, string> = {
@@ -138,7 +141,7 @@ export function montarInstrucoes(c: ContextoIA): string {
   l.push("Responda SOMENTE com um objeto JSON válido, em português do Brasil, seguindo exatamente o esquema pedido. Sem texto fora do JSON.");
   l.push(`\nMês atual: ${mes}.`);
   if (c.clima) l.push(`Clima em Patrocínio: ${c.clima}`);
-  l.push(`\nFotos enviadas, na ordem: ${c.tiposFotos.map((t) => NOMES_FOTOS[t] ?? `tipo ${t}`).join("; ")}.`);
+  if (c.tiposFotos.length) l.push(`\nFotos enviadas, na ordem: ${c.tiposFotos.map((t) => NOMES_FOTOS[t] ?? `tipo ${t}`).join("; ")}.`);
   if (c.candidato) {
     l.push(`Identificação pelo Pl@ntNet: ${c.candidato.nome_cientifico} (${c.candidato.familia ?? ""}), confiança ${Math.round(c.candidato.score * 100)}%` +
       (c.candidato.nomes_populares.length ? `, nomes populares: ${c.candidato.nomes_populares.slice(0, 4).join(", ")}` : "") + ".");
@@ -173,8 +176,17 @@ export function montarInstrucoes(c: ContextoIA): string {
     l.push("- substrato_percentual: mistura com os insumos de estrutura em estoque, somando 100.");
     l.push("- adubacao: produtos em estoque com dose em g/L e a fase (vegetativa, floração…).");
     l.push("- grupo_sugerido: o número de um dos grupos do inventário.");
-  } else {
+  } else if (c.modo === "checkup") {
     l.push("\nTarefa: faça só o CHECK-UP (laudo de saúde) desta planta do inventário, considerando os parâmetros, o histórico e as proibições dela.");
+  } else {
+    l.push("\nTarefa: CONSULTA. Responda à pergunta do Wilson sobre esta planta, em português, de forma curta e prática (até 8 linhas), seguindo os protocolos e as proibições.");
+    l.push("- Se a resposta depender de algo que não dá para saber, diga o que ele deve medir ou observar.");
+    l.push("- Em acoes, só passos concretos (pode ficar vazio).");
+    if (c.conversa?.length) {
+      l.push("\nConversa até agora:");
+      c.conversa.slice(-6).forEach((m) => l.push(`Wilson: ${m.pergunta}\nVocê: ${m.resposta}`));
+    }
+    if (c.pergunta) l.push(`\nPergunta do Wilson: ${c.pergunta}`);
   }
   return l.join("\n");
 }
@@ -427,4 +439,29 @@ export async function lerVisor(banco: BancoInventario, foto: Blob) {
 async function reduzir(foto: Blob): Promise<Blob> {
   const { reduzirImagem } = await import("./registro");
   return reduzirImagem(foto, 1568, 0.8);
+}
+
+// ---------- Consultor no chat (Fase 4) ----------
+
+export interface RespostaConsulta {
+  resposta: string;
+  acoes: Acao[];
+}
+
+export const ESQUEMA_CONSULTA = obj({ resposta: S, acoes: arr(obj({ acao: S, quando: S, insumo: S })) });
+
+// ---------- Miniatura de foto guardada no Drive (Fase 4) ----------
+
+/** Miniatura de uma foto: a guardada no aparelho ou, se não houver, a do Drive (fica guardada para a próxima vez). */
+export async function miniaturaDaFoto(banco: BancoInventario, fotoId: string, driveId: string | null): Promise<Blob | null> {
+  const local = await banco.arquivos_fotos.get(fotoId);
+  if (local?.miniatura) return local.miniatura;
+  if (!driveId) return null;
+  const cfg = await lerConfigNuvem(banco);
+  if (!cfg || !navigator.onLine) return null;
+  const r = await chamar(cfg, { acao: "miniatura", id: driveId }, 60_000);
+  const bytes = Uint8Array.from(atob(r.base64 as string), (c) => c.charCodeAt(0));
+  const blob = new Blob([bytes], { type: (r.mime as string) || "image/jpeg" });
+  await banco.arquivos_fotos.put({ id: fotoId, original: local?.original ?? null, miniatura: blob });
+  return blob;
 }

@@ -127,3 +127,18 @@ describe("leitura do visor do medidor", () => {
       .toEqual({ umidade: null, ph: null, luz: 9, temperatura: null, observacao: "reflexo" });
   });
 });
+
+describe("consultor", () => {
+  it("leva a pergunta, a conversa e as proibições, sem falar de fotos quando não há", () => {
+    const t = montarInstrucoes({
+      modo: "consulta", planta: planta("P03"), grupos, insumosEstoque: ["Pó de basalto"], data: new Date("2026-10-04T12:00:00Z"),
+      tiposFotos: [], pergunta: "Posso transplantar agora?",
+      conversa: [{ pergunta: "Ela está bem?", resposta: "Parece recuperada." }]
+    });
+    expect(t).toMatch(/CONSULTA/);
+    expect(t).toMatch(/Pergunta do Wilson: Posso transplantar agora\?/);
+    expect(t).toMatch(/Wilson: Ela está bem\?\nVocê: Parece recuperada\./);
+    expect(t).toMatch(/PROIBIDO para esta planta: vermiculita, transplante_duplo/);
+    expect(t).not.toMatch(/Fotos enviadas/);
+  });
+});

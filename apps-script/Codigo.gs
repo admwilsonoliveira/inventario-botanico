@@ -7,7 +7,8 @@
  *   - foto: guarda a foto original no Drive, em /Inventario Botanico/Fotos/<id> - <nome>;
  *   - identificar: manda as fotos ao Pl@ntNet e devolve as 3 espécies mais prováveis;
  *   - analisar: pede ao Gemini a ficha da espécie e/ou o laudo de saúde, em JSON;
- *   - uso_ia: quanto da cota grátis de cada IA já foi usado hoje.
+ *   - uso_ia: quanto da cota grátis de cada IA já foi usado hoje;
+ *   - miniatura: versão pequena de uma foto do Drive (para a linha do tempo em outro aparelho).
  *
  * Segurança: toda chamada precisa do token gerado pela função configurar() (fica nas Propriedades do script).
  * As chaves de IA ficam só aqui, nas Propriedades do script (nunca no app):
@@ -60,6 +61,7 @@ function doPost(e) {
     if (req.acao === "identificar") return responder_(identificar_(req));
     if (req.acao === "analisar") return responder_(analisar_(req));
     if (req.acao === "uso_ia") return responder_({ ok: true, uso: usoHoje_() });
+    if (req.acao === "miniatura") return responder_(miniatura_(req));
     return responder_({ erro: "Ação desconhecida: " + req.acao });
   } catch (err) {
     return responder_({ erro: String(err && err.message ? err.message : err) });
@@ -490,4 +492,15 @@ function testarChaves() {
       ? "✅ Gemini ok (" + modelo + "): " + textoDaResposta_(JSON.parse(r.getContentText())).slice(0, 50)
       : "❌ Gemini recusou (" + r.getResponseCode() + "): " + r.getContentText().slice(0, 300));
   }
+}
+
+/** req = { id } (arquivo do Drive) → { ok, base64, mime } com até 800 px de largura. */
+function miniatura_(req) {
+  const arquivo = DriveApp.getFileById(req.id);
+  const r = UrlFetchApp.fetch("https://drive.google.com/thumbnail?id=" + encodeURIComponent(req.id) + "&sz=w800", {
+    headers: { Authorization: "Bearer " + ScriptApp.getOAuthToken() },
+    muteHttpExceptions: true
+  });
+  const blob = r.getResponseCode() === 200 ? r.getBlob() : arquivo.getThumbnail();
+  return { ok: true, base64: Utilities.base64Encode(blob.getBytes()), mime: blob.getContentType() || "image/jpeg" };
 }
