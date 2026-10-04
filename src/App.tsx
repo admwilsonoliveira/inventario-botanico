@@ -18,6 +18,7 @@ import { Registrar, type TipoRegistro } from "./telas/Registrar";
 import { Historico, Hoje, NovaPendencia } from "./telas/Hoje";
 import { Escanear } from "./telas/Escanear";
 import { Desejos, NovaPlanta } from "./telas/Desejos";
+import { Insumos } from "./telas/Insumos";
 
 const TIPOS_REGISTRO: TipoRegistro[] = ["rega", "adubacao", "medicao", "foto", "outro"];
 
@@ -48,17 +49,18 @@ export function App() {
   if (erro) return <div className="tela"><div className="aviso erro">Erro ao abrir o banco local: {erro}</div></div>;
   if (!pronto) return <div className="tela carregando">Carregando…</div>;
 
-  const [secao, id, acao, tipo] = rota;
+  const [secao, id, acao, tipo, extra] = rota;
   let tela;
   if (secao === "planta" && id === "nova") tela = <NovaPlanta />;
   else if (secao === "planta" && id && acao === "editar") tela = <Editar id={id} />;
   else if (secao === "planta" && id && acao === "registrar" && TIPOS_REGISTRO.includes(tipo as TipoRegistro)) {
-    tela = <Registrar key={`${id}-${tipo}`} plantaId={id} tipo={tipo as TipoRegistro} />;
+    tela = <Registrar key={`${id}-${tipo}-${extra ?? ""}`} plantaId={id} tipo={tipo as TipoRegistro} tipoInicial={extra} />;
   } else if (secao === "planta" && id) tela = <Ficha id={id} />;
-  else if (secao === "registrar") tela = <Registrar plantaId={null} tipo="outro" />;
+  else if (secao === "registrar") tela = <Registrar key={acao ?? "geral"} plantaId={null} tipo="outro" tipoInicial={acao} />;
   else if (secao === "pendencia" && id === "nova") tela = <NovaPendencia plantaId={acao ?? null} />;
   else if (secao === "escanear") tela = <Escanear key={id ?? "novo"} plantaId={id ?? null} />;
   else if (secao === "desejos") tela = <Desejos />;
+  else if (secao === "insumos") tela = <Insumos />;
   else if (secao === "hoje") tela = <Hoje />;
   else if (secao === "historico") tela = <Historico />;
   else if (secao === "revisao") tela = <Revisao />;
@@ -66,7 +68,7 @@ export function App() {
   else if (secao === "config") tela = <Config />;
   else tela = <Lista />;
 
-  const atual = !secao || secao === "planta" || secao === "desejos" ? "" : ["registrar", "pendencia", "historico"].includes(secao) ? "hoje" : secao === "etiquetas" ? "config" : secao;
+  const atual = !secao || secao === "planta" || secao === "desejos" ? "" : ["registrar", "pendencia", "historico"].includes(secao) ? "hoje" : secao === "etiquetas" || secao === "insumos" ? "config" : secao;
   const ativa = (s: string) => (atual === s ? "ativa" : "");
 
   return (

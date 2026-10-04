@@ -373,3 +373,19 @@ details summary { cursor: pointer; color: var(--suave); min-height: 36px; paddin
   .folha-a4:last-child { break-after: auto; }
   .etiqueta { outline: none; }
 }
+
+/* ---------- Fase 3: rotina, clima e estoque ---------- */
+.alerta-clima { margin: 10px 0; padding: 12px 14px; border-radius: 12px; font-weight: 600; }
+.alerta-clima.calor { background: var(--vermelho-claro); color: var(--vermelho); }
+.alerta-clima.ar_seco { background: var(--amarelo); color: var(--texto); }
+.alerta-clima.chuvas { background: var(--azul-claro); color: var(--azul); }
+.cartao.lembrete h2 { margin-bottom: 2px; }
+.chips.quebra { flex-wrap: wrap; overflow: visible; }
+.chips a.chip { display: inline-flex; align-items: center; text-decoration: none; color: var(--texto); }
+.chips a.chip.ativo { color: var(--fundo); }
+.lista-insumos { list-style: none; padding: 0; }
+.insumo { padding: 8px 0; border-bottom: 1px solid var(--borda); }
+.insumo.sem .nome-insumo b { color: var(--suave); }
+.nome-insumo { display: grid; }
+.nome-insumo small { color: var(--suave); }
+.insumo .linha-campo input { width: 110px; }

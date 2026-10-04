@@ -12,6 +12,7 @@ import { condicoesDesconhecidas } from "../regras";
 import { lerConfigNuvem, sincronizarAgora, testarNuvem } from "../sync";
 import { StatusNuvem } from "../componentes";
 import { avisar } from "../aviso";
+import { INTERVALO_ACIDIFICACAO_PADRAO } from "./Hoje";
 import type { Regra } from "../types";
 
 const PALAVRA = "RESTAURAR";
@@ -127,6 +128,27 @@ function SecaoIA() {
   );
 }
 
+function SecaoRotina() {
+  const intervalo = useLiveQuery(() => lerConfig<number>(db, "intervalo_acidificacao", INTERVALO_ACIDIFICACAO_PADRAO), [], INTERVALO_ACIDIFICACAO_PADRAO);
+  const [texto, setTexto] = useState<string | null>(null);
+  return (
+    <section className="cartao">
+      <h2>Rotinas</h2>
+      <p className="ajuda">Lixiviação: lembrete a cada 30 dias. Retomada da adubação: em outubro. Check-up: cerca de 2 plantas por dia.</p>
+      <label className="linha-campo">Acidificação das acidófilas a cada
+        <input inputMode="numeric" value={texto ?? String(intervalo)} onChange={(e) => setTexto(e.target.value)}
+          onBlur={async () => {
+            const n = Number(texto);
+            if (texto !== null && Number.isInteger(n) && n > 0) await gravarConfig(db, "intervalo_acidificacao", n);
+            setTexto(null);
+          }} />
+        dias
+      </label>
+      <p className="ajuda">O protocolo diz só "periódica": ajuste para a frequência que você usa.</p>
+    </section>
+  );
+}
+
 function ItemRegra({ r }: { r: Regra }) {
   const [texto, setTexto] = useState(r.mensagem);
   const [editando, setEditando] = useState(false);
@@ -204,9 +226,12 @@ export function Config() {
       <SecaoIA />
 
       <section className="cartao">
-        <h2>Etiquetas QR</h2>
+        <h2>Estoque e etiquetas</h2>
+        <a className="botao secundario largo" href="#/insumos">🧺 Insumos (estoque)</a>
         <a className="botao secundario largo" href="#/etiquetas">🏷️ Imprimir etiquetas</a>
       </section>
+
+      <SecaoRotina />
 
       <section className="cartao">
         <h2>Exportar para Excel</h2>

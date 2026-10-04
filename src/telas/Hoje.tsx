@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
-import { db } from "../db";
+import { db, lerConfig } from "../db";
+import { alertasDeClima, type AlertaClima, checkupsDoDia, lembretesDeRotina } from "../rotina";
+import { previsaoPatrocinio } from "../ia";
 import { formatarData } from "../formato";
 import {
   agruparPendencias, apagarPendencia, concluirPendencia, hojeISO, novaPendencia, type Periodo, ROTULO_PERIODO
@@ -11,6 +13,75 @@ import { StatusNuvem } from "../componentes";
 import { TIPOS_EVENTO, type Pendencia, type Planta } from "../types";
 
 const ORDEM: Periodo[] = ["atrasadas", "hoje", "semana", "mes", "depois"];
+
+export const INTERVALO_ACIDIFICACAO_PADRAO = 14;
+
+/** Alertas de clima, lembretes das rotinas e check-ups do dia (Fase 3). */
+function Rotina() {
+  const plantas = useLiveQuery(() => db.plantas.toArray(), []);
+  const eventos = useLiveQuery(() => db.eventos.toArray(), []);
+  const intervalo = useLiveQuery(() => lerConfig<number>(db, "intervalo_acidificacao", INTERVALO_ACIDIFICACAO_PADRAO), [], INTERVALO_ACIDIFICACAO_PADRAO);
+  const [clima, setClima] = useState<AlertaClima[] | null>(null);
+  useEffect(() => {
+    previsaoPatrocinio().then((p) => setClima(p ? alertasDeClima(p, hojeISO()) : null));
+  }, []);
+  if (!plantas || !eventos) return null;
+  const hoje = hojeISO();
+  const lembretes = lembretesDeRotina(plantas, eventos, hoje, intervalo);
+  const checkups = checkupsDoDia(plantas, eventos, hoje);
+
+  const linkRegistro = (tipo: string, plantaId: string) =>
+    tipo === "adubacao" ? `#/planta/${plantaId}/registrar/adubacao` : `#/planta/${plantaId}/registrar/outro/${tipo}`;
+
+  return (
+    <>
+      {clima?.map((a) => (
+        <div key={a.tipo} className={`alerta-clima ${a.tipo}`}>
+          {a.tipo === "calor" ? "🌡️" : a.tipo === "ar_seco" ? "💨" : "🌧️"} {a.texto}
+        </div>
+      ))}
+
+      {lembretes.map((l) => (
+        <section key={l.chave} className="cartao lembrete">
+          <h2>🔁 {l.titulo}</h2>
+          <p className="ajuda">{l.texto}</p>
+          {l.plantas.length === 0 ? (
+            <a className="botao largo" href={`#/registrar/geral/${l.tipoEvento}`}>Registrar (evento geral)</a>
+          ) : l.plantas.length <= 6 ? (
+            <div className="chips quebra">
+              {l.plantas.map((p) => <a key={p.id} className="chip" href={linkRegistro(l.tipoEvento, p.id)}>{p.nome_popular}</a>)}
+            </div>
+          ) : (
+            <details>
+              <summary>Ver as {l.plantas.length} plantas</summary>
+              <div className="chips quebra">
+                {l.plantas.map((p) => <a key={p.id} className="chip" href={linkRegistro(l.tipoEvento, p.id)}>{p.nome_popular}</a>)}
+              </div>
+            </details>
+          )}
+        </section>
+      ))}
+
+      {(checkups.hoje.length > 0 || checkups.atrasados.length > 0) && (
+        <section className="cartao lembrete">
+          <h2>🩺 Check-up do dia</h2>
+          <p className="ajuda">Cada planta tem um dia no mês (cerca de 2 por dia). Toque para fazer as fotos e o laudo.</p>
+          <div className="chips quebra">
+            {checkups.hoje.map((p) => <a key={p.id} className="chip ativo" href={`#/escanear/${p.id}`}>{p.nome_popular}</a>)}
+          </div>
+          {checkups.atrasados.length > 0 && (
+            <details>
+              <summary>Atrasados neste mês ({checkups.atrasados.length})</summary>
+              <div className="chips quebra">
+                {checkups.atrasados.map((p) => <a key={p.id} className="chip" href={`#/escanear/${p.id}`}>{p.nome_popular}</a>)}
+              </div>
+            </details>
+          )}
+        </section>
+      )}
+    </>
+  );
+}
 
 function ItemPendencia({ p, planta }: { p: Pendencia; planta?: Planta }) {
   return (
@@ -50,6 +121,7 @@ export function Hoje() {
         <a className="botao" href="#/pendencia/nova">+ Pendência</a>
         <a className="botao secundario" href="#/registrar/geral">📝 Evento geral</a>
       </div>
+      <Rotina />
 
       {ORDEM.map((k) => grupos[k].length > 0 && (
         <section key={k} className={k === "atrasadas" ? "bloco atrasadas" : "bloco"}>

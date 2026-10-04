@@ -8,6 +8,7 @@ import {
 } from "../registro";
 import { ir } from "../rotas";
 import { avisar } from "../aviso";
+import { lerVisor } from "../ia";
 import { TIPOS_EVENTO, type Evento, type Planta } from "../types";
 
 export type TipoRegistro = "rega" | "adubacao" | "medicao" | "foto" | "outro";
@@ -42,7 +43,7 @@ function AvisosRegras({ disparos }: { disparos: Disparo[] }) {
   );
 }
 
-export function Registrar({ plantaId, tipo }: { plantaId: string | null; tipo: TipoRegistro }) {
+export function Registrar({ plantaId, tipo, tipoInicial }: { plantaId: string | null; tipo: TipoRegistro; tipoInicial?: string }) {
   // undefined = carregando; null = sem planta (evento geral) ou não encontrada
   const planta = useLiveQuery(
     async (): Promise<Planta | null> => (plantaId ? (await db.plantas.get(plantaId)) ?? null : null),
@@ -60,17 +61,17 @@ export function Registrar({ plantaId, tipo }: { plantaId: string | null; tipo: T
       <p className="subtitulo">{planta ? planta.nome_popular : "Evento geral (todas as plantas ou sem planta específica)"}</p>
       {tipo === "medicao" && planta ? <FormMedicao planta={planta} />
         : tipo === "foto" && planta ? <FormFoto planta={planta} />
-        : <FormEvento planta={planta ?? null} tipo={tipo} />}
+        : <FormEvento planta={planta ?? null} tipo={tipo} tipoInicial={tipoInicial} />}
     </>
   );
 }
 
 // ---------------------------------------------------------------------------
 
-function FormEvento({ planta, tipo }: { planta: Planta | null; tipo: TipoRegistro }) {
+function FormEvento({ planta, tipo, tipoInicial }: { planta: Planta | null; tipo: TipoRegistro; tipoInicial?: string }) {
   const insumos = useLiveQuery(() => db.insumos.toArray(), [], []);
   const [data, setData] = useState(hojeISO());
-  const [tipoOutro, setTipoOutro] = useState(planta ? "observacao" : "lixiviacao");
+  const [tipoOutro, setTipoOutro] = useState(tipoInicial && TIPOS_OUTRO.includes(tipoInicial) ? tipoInicial : planta ? "observacao" : "lixiviacao");
   const [produto, setProduto] = useState("");
   const [dose, setDose] = useState("");
   const [volumeL, setVolumeL] = useState("");
@@ -132,8 +133,8 @@ function FormEvento({ planta, tipo }: { planta: Planta | null; tipo: TipoRegistr
       return;
     }
     setSalvando(true);
-    await salvarEvento(db, evento);
-    avisar(`✔ ${TIPOS_EVENTO[tipoEvento] ?? "Registro"} salvo`);
+    const estoque = await salvarEvento(db, evento);
+    avisar(`✔ ${TIPOS_EVENTO[tipoEvento] ?? "Registro"} salvo${estoque ? `. ${estoque}` : ""}`);
     ir(planta ? `/planta/${planta.id}` : "/hoje");
   }
 
@@ -248,6 +249,9 @@ function FormMedicao({ planta }: { planta: Planta }) {
   const veredito = umidade !== null ? vereditoRega(planta, umidade) : null;
   const avisoPh = num(ph) !== null ? avaliarPh(planta, num(ph)!) : null;
 
+  const [lendo, setLendo] = useState(false);
+  const [leitura, setLeitura] = useState<string | null>(null);
+
   async function salvar() {
     await salvarMedicao(db, {
       planta_id: planta.id, data_hora: new Date().toISOString(), umidade,
@@ -257,8 +261,35 @@ function FormMedicao({ planta }: { planta: Planta }) {
     avisar("✔ Medição salva");
   }
 
+  /** Lê o visor pela foto (Gemini) e preenche os campos para conferir antes de salvar. */
+  async function lerPelaFoto(foto: File | undefined) {
+    if (!foto) return;
+    setLendo(true);
+    setLeitura(null);
+    try {
+      const l = await lerVisor(db, foto);
+      if (l.umidade !== null) setUmidade(l.umidade);
+      if (l.ph !== null) setPh(String(l.ph).replace(".", ","));
+      if (l.luz !== null) setLuz(String(l.luz));
+      if (l.temperatura !== null) setTemp(String(l.temperatura).replace(".", ","));
+      setSalva(false);
+      const lidos = [l.umidade, l.ph, l.luz, l.temperatura].filter((v) => v !== null).length;
+      setLeitura(`Lidos ${lidos} de 4 valores. Confira antes de salvar.${l.observacao ? ` ${l.observacao}` : ""}`);
+    } catch (e) {
+      setLeitura(`Não foi possível ler: ${(e as Error).message}`);
+    } finally {
+      setLendo(false);
+    }
+  }
+
   return (
     <div className="formulario">
+      <label className="botao secundario largo escolher-foto">
+        {lendo ? "Lendo o visor…" : "📷 Ler pelo visor (foto do medidor)"}
+        <input type="file" accept="image/*" capture="environment" hidden disabled={lendo}
+          onChange={(e) => { lerPelaFoto(e.target.files?.[0]); e.target.value = ""; }} />
+      </label>
+      {leitura && <div className="aviso">{leitura}</div>}
       <div>
         <p className="rotulo">Umidade no medidor (1 = muito seco … 5 = muito molhado)</p>
         <div className="botoes-nivel">
