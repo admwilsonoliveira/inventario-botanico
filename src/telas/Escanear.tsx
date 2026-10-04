@@ -51,6 +51,17 @@ export function Escanear({ plantaId }: { plantaId: string | null }) {
   const [resultado, setResultado] = useState<Resultado | null>(null);
   const [erro, setErro] = useState<string | null>(null);
   const [salvando, setSalvando] = useState(false);
+  const [repetir, setRepetir] = useState<(() => void) | null>(null);
+
+  /** Mensagem de erro com o botão de tentar de novo a última análise. */
+  const caixaErro = erro && (
+    <div className="aviso erro">
+      {erro}
+      {repetir && (
+        <button className="botao largo" onClick={() => repetir()}>↻ Tentar de novo</button>
+      )}
+    </div>
+  );
 
   if (plantaId && plantaCheckup === undefined) return null;
   if (plantaId && !plantaCheckup) return <p>Planta não encontrada.</p>;
@@ -104,6 +115,7 @@ export function Escanear({ plantaId }: { plantaId: string | null }) {
 
   async function identificar() {
     setErro(null);
+    setRepetir(() => () => identificar());
     setEtapa("identificando");
     try {
       const c = await identificarFotos(db, lista);
@@ -130,6 +142,7 @@ export function Escanear({ plantaId }: { plantaId: string | null }) {
 
   async function analisar(modo: "ficha" | "checkup", candidato: Candidato | null, planta: Planta | null) {
     setErro(null);
+    setRepetir(() => () => analisar(modo, candidato, planta));
     setAlvo(planta);
     setEtapa("analisando");
     try {
@@ -221,7 +234,7 @@ export function Escanear({ plantaId }: { plantaId: string | null }) {
       <>
         <button className="voltar link-voltar" onClick={() => setEtapa("fotos")}>‹ Fotos</button>
         <h1>Qual é a planta?</h1>
-        {erro && <div className="aviso erro">{erro}</div>}
+        {caixaErro}
         {candidatos.length === 0 ? (
           <div className="aviso">O Pl@ntNet não reconheceu a planta. Tente outra foto: uma flor ou fruto ajuda muito.</div>
         ) : melhor.score < CONFIANCA_MINIMA ? (
@@ -303,7 +316,7 @@ export function Escanear({ plantaId }: { plantaId: string | null }) {
       <a className="voltar" href={voltar}>‹ Voltar</a>
       <h1>{titulo}</h1>
       <p className="ajuda">Fotos 1 e 2 são obrigatórias. As outras ajudam: flor ou fruto melhora muito a identificação; sintoma e colo ajudam no laudo.</p>
-      {erro && <div className="aviso erro">{erro}</div>}
+      {caixaErro}
       {rejeitada && (
         <div className="aviso erro">
           <b>Foto tremida ou fora de foco</b> (nitidez {Math.round(rejeitada.nitidez)}; mínimo {rejeitada.limiar}). Tire de novo, com o celular firme.

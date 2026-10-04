@@ -12,7 +12,8 @@
  * Segurança: toda chamada precisa do token gerado pela função configurar() (fica nas Propriedades do script).
  * As chaves de IA ficam só aqui, nas Propriedades do script (nunca no app):
  *   PLANTNET_KEY, GEMINI_KEY — obrigatórias para a Fase 2;
- *   GEMINI_MODELO (padrão gemini-3.8-flash), GEMINI_LIMITE_DIA (padrão 20), PLANTNET_LIMITE_DIA (padrão 500) — opcionais.
+ *   GEMINI_MODELO (padrão gemini-3.8-flash), GEMINI_RESERVA (padrão gemini-3.7-flash,gemini-3.5-flash),
+ *   GEMINI_LIMITE_DIA (padrão 20), PLANTNET_LIMITE_DIA (padrão 500) — opcionais.
  * Cada chamada de IA é anotada na aba "uso_ia"; ao chegar a 80% do limite do dia, novas chamadas são recusadas.
  */
 
@@ -384,33 +385,48 @@ function analisar_(req) {
   const chave = prop_("GEMINI_KEY", "");
   if (!chave) throw new Error("Falta a chave do Gemini (GEMINI_KEY) nas Propriedades do script.");
   conferirCota_("gemini");
-  const modelo = prop_("GEMINI_MODELO", "gemini-3.8-flash");
+  // modelo principal e reservas (todos com cota grátis), usados se o principal estiver sobrecarregado
+  const modelos = [prop_("GEMINI_MODELO", "gemini-3.8-flash")].concat(
+    prop_("GEMINI_RESERVA", "gemini-3.7-flash,gemini-3.5-flash").split(",").map(function (m) { return m.trim(); }).filter(Boolean)
+  );
 
   const entrada = [{ type: "text", text: req.instrucoes }].concat((req.imagens || []).slice(0, 6).map(function (img) {
     return { type: "image", data: img.base64, mime_type: img.mime || "image/jpeg" };
   }));
-  const corpo = { model: modelo, input: entrada, store: false };
-  if (req.esquema) corpo.response_format = { type: "text", mime_type: "application/json", schema: req.esquema };
 
-  let resp = chamarGemini_(GEMINI_URL, corpo, chave);
-  // se o formato com esquema for recusado, tenta de novo pedindo só JSON no texto
-  if (resp.getResponseCode() === 400 && corpo.response_format) {
-    delete corpo.response_format;
-    resp = chamarGemini_(GEMINI_URL, corpo, chave);
+  let ultimo = null;
+  for (let m = 0; m < modelos.length; m++) {
+    const modelo = modelos[m];
+    for (let tentativa = 0; tentativa < 2; tentativa++) {
+      const corpo = { model: modelo, input: entrada, store: false };
+      if (req.esquema) corpo.response_format = { type: "text", mime_type: "application/json", schema: req.esquema };
+      let resp = chamarGemini_(GEMINI_URL, corpo, chave);
+      // se o formato com esquema for recusado, tenta de novo pedindo só JSON no texto
+      if (resp.getResponseCode() === 400 && corpo.response_format) {
+        delete corpo.response_format;
+        resp = chamarGemini_(GEMINI_URL, corpo, chave);
+      }
+      const codigo = resp.getResponseCode();
+      if (codigo === 200) {
+        const json = JSON.parse(resp.getContentText());
+        const tokens = (json.usage && json.usage.total_tokens) || (json.usageMetadata && json.usageMetadata.totalTokenCount) || "";
+        anotarUso_("gemini", 1, tokens, modelo);
+        const texto = textoDaResposta_(json);
+        if (!texto) throw new Error("O Gemini não devolveu texto.");
+        return { ok: true, resultado: lerJson_(texto), tokens: tokens, modelo: modelo };
+      }
+      // falha não conta na cota do dia (quantidade 0), só fica anotada
+      anotarUso_("gemini", 0, "", modelo + " HTTP " + codigo);
+      ultimo = { codigo: codigo, texto: resp.getContentText().slice(0, 200), modelo: modelo };
+      if (codigo === 400 || codigo === 401 || codigo === 403) {
+        throw new Error("O Gemini recusou o pedido (" + codigo + "). Confira a chave GEMINI_KEY e o modelo " + modelo + ". " + ultimo.texto);
+      }
+      if (codigo === 404 || codigo === 429) break; // modelo indisponível ou cota dele esgotada: vai para a reserva
+      Utilities.sleep(tentativa === 0 ? 3000 : 6000); // sobrecarga (503/500): espera e tenta de novo
+    }
   }
-  const codigo = resp.getResponseCode();
-  if (codigo !== 200) {
-    anotarUso_("gemini", 1, "", "HTTP " + codigo);
-    if (codigo === 429) throw new Error("O Gemini recusou: limite da cota grátis atingido. Tente mais tarde.");
-    if (codigo === 400 || codigo === 403) throw new Error("O Gemini recusou o pedido (" + codigo + "). Confira a chave GEMINI_KEY e o modelo " + modelo + ". " + resp.getContentText().slice(0, 200));
-    throw new Error("Erro do Gemini (" + codigo + "): " + resp.getContentText().slice(0, 200));
-  }
-  const json = JSON.parse(resp.getContentText());
-  const tokens = (json.usage && json.usage.total_tokens) || (json.usageMetadata && json.usageMetadata.totalTokenCount) || "";
-  anotarUso_("gemini", 1, tokens, modelo);
-  const texto = textoDaResposta_(json);
-  if (!texto) throw new Error("O Gemini não devolveu texto.");
-  return { ok: true, resultado: lerJson_(texto), tokens: tokens };
+  if (ultimo && ultimo.codigo === 429) throw new Error("O Gemini recusou: cota grátis atingida em todos os modelos. Tente mais tarde.");
+  throw new Error("O Gemini está sobrecarregado agora (" + (ultimo ? ultimo.codigo : "?") + "). Isso costuma passar em alguns minutos: tente de novo.");
 }
 
 function chamarGemini_(url, corpo, chave) {

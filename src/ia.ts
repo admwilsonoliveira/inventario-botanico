@@ -336,7 +336,7 @@ export async function identificarFotos(banco: BancoInventario, fotos: FotoEscane
 export async function analisarFotos<T>(banco: BancoInventario, instrucoes: string, fotos: FotoEscaneada[], esquema: object): Promise<T> {
   const cfg = await nuvem(banco);
   const imagens = await Promise.all(fotos.slice(0, 6).map(async (f) => ({ base64: await blobParaBase64(f.reduzida), mime: "image/jpeg" })));
-  const r = await chamar(cfg, { acao: "analisar", instrucoes, imagens, esquema }, 180_000);
+  const r = await chamar(cfg, { acao: "analisar", instrucoes, imagens, esquema }, 330_000); // com as tentativas de reserva pode demorar
   return r.resultado as T;
 }
 
