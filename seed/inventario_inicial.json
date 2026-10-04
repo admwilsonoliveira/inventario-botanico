@@ -1,0 +1,2735 @@
+{
+  "versao": 1,
+  "gerado_em": "2026-10-04",
+  "local": {
+    "cidade": "Patrocínio",
+    "uf": "MG",
+    "latitude": -18.94,
+    "longitude": -46.99,
+    "clima": "Cerrado de altitude: seca e calor abr–set; chuvas out–mar"
+  },
+  "escalas": {
+    "umidade": "1 = muito seco ... 5 = muito molhado (medir no colo)",
+    "luz": "1–9 (satura em 9; não confiável sob LED)"
+  },
+  "proxima_ficha": 53,
+  "observacao_numeracao": "Fichas 1–46 existem na planilha do Wilson, mas o número de cada planta não está neste arquivo (ficha = null). O app deve permitir preencher o número na ficha. 43–46 = Monstera, Begônia, Colar-de-pérolas e Sedum (ordem a confirmar). 47 = Filodendro; 48–51 = Caládios; 52 = Samambaia Duffii.",
+  "plantas": [
+    {
+      "id": "P01",
+      "ficha": null,
+      "nome_popular": "Rosa-do-deserto",
+      "nome_cientifico": "Adenium obesum",
+      "grupo": 1,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": "2026-06",
+      "origem": "Resgate de abandono",
+      "zona": null,
+      "ph_min": 6.5,
+      "ph_max": 7.5,
+      "rega_gatilho_min": 1,
+      "rega_gatilho_max": 2,
+      "luz": "Sol pleno",
+      "vaso": "Cuia de barro rasa, caudex elevado",
+      "substrato": null,
+      "adubacao": "Forth Flores (floração); Forth Rosa do Deserto 09-45-15 disponível",
+      "objetivo": "Flores, sementes e estacas",
+      "tags": [
+        "deserto",
+        "periodo_seco"
+      ],
+      "proibicoes": [],
+      "historico": "Resgatada em jun/2026. Floração intensa em set/2026. Ramos estiolados pela sombra do local antigo. Recebeu Forth Flores e MgSO4 1 g/L em 18/09/2026.",
+      "params_origem": "inventario",
+      "alertas": []
+    },
+    {
+      "id": "P02",
+      "ficha": null,
+      "nome_popular": "Alecrim",
+      "nome_cientifico": "Salvia rosmarinus",
+      "grupo": 1,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": 6.5,
+      "ph_max": 7.5,
+      "rega_gatilho_min": 1,
+      "rega_gatilho_max": 2,
+      "luz": "Sol pleno",
+      "vaso": "Vaso reduzido",
+      "substrato": "50% areia",
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "mediterraneo",
+        "erva"
+      ],
+      "proibicoes": [],
+      "historico": "pH medido 5,0; correção lenta com pó de basalto. Poda das pontas adiada pelo choque do transplante.",
+      "params_origem": "inventario",
+      "alertas": []
+    },
+    {
+      "id": "P03",
+      "ficha": null,
+      "nome_popular": "Lavanda",
+      "nome_cientifico": "Lavandula dentata",
+      "grupo": 1,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": 6.5,
+      "ph_max": 7.5,
+      "rega_gatilho_min": 1,
+      "rega_gatilho_max": 2,
+      "luz": "Sol pleno",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "mediterraneo"
+      ],
+      "proibicoes": [
+        "vermiculita",
+        "transplante_duplo"
+      ],
+      "historico": "Sofreu com excesso de vermiculita (folhas basais amarelas). Recuperada com jejum hídrico em sol pleno; emitiu inflorescências. Fica no vaso definitivo.",
+      "params_origem": "inventario",
+      "alertas": []
+    },
+    {
+      "id": "P04",
+      "ficha": null,
+      "nome_popular": "Flor-da-fortuna",
+      "nome_cientifico": "Kalanchoe blossfeldiana",
+      "grupo": 1,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": "Resgate",
+      "zona": null,
+      "ph_min": 6.5,
+      "ph_max": 7.5,
+      "rega_gatilho_min": 1,
+      "rega_gatilho_max": 2,
+      "luz": "Sol intenso",
+      "vaso": "Vaso suspenso",
+      "substrato": "40% perlita",
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "suculenta"
+      ],
+      "proibicoes": [],
+      "historico": "Resgatada estiolada. Brotando novas hastes florais.",
+      "params_origem": "inventario",
+      "alertas": []
+    },
+    {
+      "id": "P05",
+      "ficha": null,
+      "nome_popular": "Zamioculca",
+      "nome_cientifico": "Zamioculcas zamiifolia",
+      "grupo": 1,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": 5.5,
+      "ph_max": 6.5,
+      "rega_gatilho_min": 1,
+      "rega_gatilho_max": 2,
+      "luz": "Luz indireta a meia-sombra",
+      "vaso": null,
+      "substrato": "Casca de pinus e pó de café na base (acidificação gradual)",
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [],
+      "proibicoes": [],
+      "historico": "pH medido 7,0 e umidade 3; regas suspensas.",
+      "params_origem": "inventario",
+      "alertas": []
+    },
+    {
+      "id": "P06",
+      "ficha": null,
+      "nome_popular": "Coroa-de-cristo",
+      "nome_cientifico": "Euphorbia milii",
+      "grupo": 1,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": 6.5,
+      "ph_max": 7.5,
+      "rega_gatilho_min": 1,
+      "rega_gatilho_max": 2,
+      "luz": "Sol pleno",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "suculenta",
+        "latex_irritante"
+      ],
+      "proibicoes": [],
+      "historico": "Brácteas vermelhas vigorosas. Amarelecimento basal por estresse hídrico; rega controlada com medidor.",
+      "params_origem": "inventario",
+      "alertas": [
+        "Grupo em conflito: registro do projeto coloca no Grupo 1; registro de set/2026 agrupa entre as floríferas (Grupo 3). Confirmar."
+      ]
+    },
+    {
+      "id": "P07",
+      "ficha": null,
+      "nome_popular": "Aveloz",
+      "nome_cientifico": "Euphorbia tirucalli",
+      "grupo": 1,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": "Resgate",
+      "zona": null,
+      "ph_min": 6.5,
+      "ph_max": 7.5,
+      "rega_gatilho_min": 1,
+      "rega_gatilho_max": 2,
+      "luz": "Sol pleno",
+      "vaso": "Vaso mais largo",
+      "substrato": "Muita perlita",
+      "adubacao": "Só pó de basalto, sem NPK de choque",
+      "objetivo": null,
+      "tags": [
+        "suculenta",
+        "latex_irritante"
+      ],
+      "proibicoes": [],
+      "historico": "",
+      "params_origem": "inventario",
+      "alertas": []
+    },
+    {
+      "id": "P08",
+      "ficha": null,
+      "nome_popular": "Planta-jade",
+      "nome_cientifico": "Crassula ovata",
+      "grupo": 1,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": 6.5,
+      "ph_max": 7.5,
+      "rega_gatilho_min": 1,
+      "rega_gatilho_max": 2,
+      "luz": "Sol intenso",
+      "vaso": null,
+      "substrato": "Terra + perlita pesada",
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "suculenta"
+      ],
+      "proibicoes": [
+        "forth_flores"
+      ],
+      "historico": "Bordas avermelhadas (estresse de sol, normal).",
+      "params_origem": "inventario",
+      "alertas": []
+    },
+    {
+      "id": "P09",
+      "ficha": null,
+      "nome_popular": "Babosa",
+      "nome_cientifico": "Aloe vera",
+      "grupo": 1,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": 6.5,
+      "ph_max": 7.5,
+      "rega_gatilho_min": 1,
+      "rega_gatilho_max": 2,
+      "luz": "Sol intenso",
+      "vaso": null,
+      "substrato": "Terra + perlita pesada",
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "suculenta"
+      ],
+      "proibicoes": [
+        "forth_flores"
+      ],
+      "historico": "",
+      "params_origem": "inventario",
+      "alertas": []
+    },
+    {
+      "id": "P10",
+      "ficha": null,
+      "nome_popular": "Aranto",
+      "nome_cientifico": "Kalanchoe daigremontiana",
+      "grupo": 1,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": 6.5,
+      "ph_max": 7.5,
+      "rega_gatilho_min": 1,
+      "rega_gatilho_max": 2,
+      "luz": "Sol intenso",
+      "vaso": null,
+      "substrato": "Terra + perlita pesada",
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "suculenta"
+      ],
+      "proibicoes": [
+        "forth_flores"
+      ],
+      "historico": "",
+      "params_origem": "inventario",
+      "alertas": [
+        "Nome científico atribuído ao nome popular 'aranto'; confirmar."
+      ]
+    },
+    {
+      "id": "P11",
+      "ficha": null,
+      "nome_popular": "Suculentas diversas (lote)",
+      "nome_cientifico": null,
+      "grupo": 1,
+      "quantidade": null,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": 6.5,
+      "ph_max": 7.5,
+      "rega_gatilho_min": 1,
+      "rega_gatilho_max": 2,
+      "luz": "Sol intenso",
+      "vaso": null,
+      "substrato": "Terra + perlita pesada",
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "suculenta",
+        "lote"
+      ],
+      "proibicoes": [
+        "forth_flores"
+      ],
+      "historico": "",
+      "params_origem": "inventario",
+      "alertas": [
+        "Lote sem detalhamento: separar em fichas individuais pelo escaneamento."
+      ]
+    },
+    {
+      "id": "P12",
+      "ficha": null,
+      "nome_popular": "Espada-de-são-jorge",
+      "nome_cientifico": "Dracaena trifasciata (Sansevieria)",
+      "grupo": 1,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": 6.0,
+      "ph_max": 7.5,
+      "rega_gatilho_min": 1,
+      "rega_gatilho_max": 2,
+      "luz": "Sol a meia-sombra",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "suculenta"
+      ],
+      "proibicoes": [],
+      "historico": "",
+      "params_origem": "inventario",
+      "alertas": []
+    },
+    {
+      "id": "P13",
+      "ficha": null,
+      "nome_popular": "Colar-de-pérolas",
+      "nome_cientifico": "Curio rowleyanus",
+      "grupo": 1,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": "2026-09",
+      "origem": "Comprado",
+      "zona": null,
+      "ph_min": 6.0,
+      "ph_max": 7.0,
+      "rega_gatilho_min": 1,
+      "rega_gatilho_max": 2,
+      "luz": "Luz forte, sol da manhã",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "suculenta"
+      ],
+      "proibicoes": [
+        "forth_flores"
+      ],
+      "historico": "",
+      "params_origem": "inventario",
+      "alertas": [
+        "Ficha entre nº 43 e 46 — confirmar o número exato.",
+        "Confirmar furo de drenagem e material do vaso."
+      ]
+    },
+    {
+      "id": "P14",
+      "ficha": null,
+      "nome_popular": "Sedum 'Aurora'",
+      "nome_cientifico": "Sedum rubrotinctum 'Aurora'",
+      "grupo": 1,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": "2026-09",
+      "origem": "Comprado",
+      "zona": null,
+      "ph_min": 6.0,
+      "ph_max": 7.0,
+      "rega_gatilho_min": 1,
+      "rega_gatilho_max": 2,
+      "luz": "Sol pleno",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "suculenta"
+      ],
+      "proibicoes": [
+        "forth_flores"
+      ],
+      "historico": "Chegou estiolado.",
+      "params_origem": "inventario",
+      "alertas": [
+        "Ficha entre nº 43 e 46 — confirmar o número exato.",
+        "Decapitação e transplante não podem ser feitos juntos."
+      ]
+    },
+    {
+      "id": "P15",
+      "ficha": null,
+      "nome_popular": "Costela-de-adão",
+      "nome_cientifico": "Monstera deliciosa",
+      "grupo": 2,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": "2026-09",
+      "origem": "Comprada",
+      "zona": "Varanda (sol 17h–18h)",
+      "ph_min": 5.5,
+      "ph_max": 7.0,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 3,
+      "luz": "Luz filtrada; sol direto 17h–18h",
+      "vaso": "9,7 L",
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "tropical",
+        "em_formacao"
+      ],
+      "proibicoes": [
+        "forth_flores"
+      ],
+      "historico": "Tutor de fibra de coco instalado em 19/09/2026 encostado no caule (não manter úmido; aderência vem do contato e amarração). Ainda em roseta, emitindo broto novo.",
+      "params_origem": "inventario",
+      "alertas": [
+        "Ficha entre nº 43 e 46 — confirmar o número exato."
+      ]
+    },
+    {
+      "id": "P16",
+      "ficha": null,
+      "nome_popular": "Begônia maculata",
+      "nome_cientifico": "Begonia maculata 'Wightii'",
+      "grupo": 2,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": "2026-09",
+      "origem": "Comprada",
+      "zona": "Varanda (sol 17h–18h)",
+      "ph_min": 5.5,
+      "ph_max": 6.5,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 3,
+      "luz": "Luz filtrada; sol direto 17h–18h",
+      "vaso": "9,7 L",
+      "substrato": "Substrato para planta sensível a podridão",
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "tropical"
+      ],
+      "proibicoes": [
+        "forth_flores"
+      ],
+      "historico": "",
+      "params_origem": "inventario",
+      "alertas": [
+        "Ficha entre nº 43 e 46 — confirmar o número exato."
+      ]
+    },
+    {
+      "id": "P17",
+      "ficha": null,
+      "nome_popular": "Samambaia (resgate)",
+      "nome_cientifico": "Nephrolepis ou Phlebodium — confirmar",
+      "grupo": 2,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": "Resgate (raiz enovelada)",
+      "zona": "Varanda (sol 17h–18h)",
+      "ph_min": 6.0,
+      "ph_max": 7.0,
+      "rega_gatilho_min": 3,
+      "rega_gatilho_max": 4,
+      "luz": "Luz filtrada",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": "Bokashi + pó de basalto",
+      "objetivo": null,
+      "tags": [
+        "tropical"
+      ],
+      "proibicoes": [],
+      "historico": "pH medido 6,0.",
+      "params_origem": "inventario",
+      "alertas": [
+        "Gênero não confirmado — usar o escaneamento para identificar."
+      ]
+    },
+    {
+      "id": "P18",
+      "ficha": null,
+      "nome_popular": "Lírio-da-paz",
+      "nome_cientifico": "Spathiphyllum sp.",
+      "grupo": 2,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": "Varanda (sol 17h–18h)",
+      "ph_min": 6.0,
+      "ph_max": 7.0,
+      "rega_gatilho_min": 3,
+      "rega_gatilho_max": 4,
+      "luz": "Luz filtrada",
+      "vaso": null,
+      "substrato": "1:1:1 + casca de pinus fina + húmus",
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "tropical"
+      ],
+      "proibicoes": [],
+      "historico": "Salvo da 'terra dura'.",
+      "params_origem": "inventario",
+      "alertas": []
+    },
+    {
+      "id": "P19",
+      "ficha": null,
+      "nome_popular": "Jiboia",
+      "nome_cientifico": "Epipremnum aureum",
+      "grupo": 2,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": 5.5,
+      "ph_max": 6.5,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 3,
+      "luz": "Luz filtrada",
+      "vaso": "Vaso branco com drenagem ampla",
+      "substrato": "Casca de pinus na cobertura",
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "tropical"
+      ],
+      "proibicoes": [],
+      "historico": "Choque pós-transplante; estacas podres retiradas.",
+      "params_origem": "inventario",
+      "alertas": []
+    },
+    {
+      "id": "P20",
+      "ficha": null,
+      "nome_popular": "Comigo-ninguém-pode",
+      "nome_cientifico": "Dieffenbachia sp.",
+      "grupo": 2,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": "Muda basal separada",
+      "zona": null,
+      "ph_min": 5.5,
+      "ph_max": 6.5,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 3,
+      "luz": "Sol de fim de tarde",
+      "vaso": null,
+      "substrato": "Com areia e perlita",
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "tropical",
+        "toxica"
+      ],
+      "proibicoes": [],
+      "historico": "Enraizando.",
+      "params_origem": "inventario",
+      "alertas": []
+    },
+    {
+      "id": "P21",
+      "ficha": null,
+      "nome_popular": "Calathea",
+      "nome_cientifico": "Calathea sp. (Goeppertia)",
+      "grupo": 2,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": 5.5,
+      "ph_max": 6.5,
+      "rega_gatilho_min": 3,
+      "rega_gatilho_max": 3,
+      "luz": "Luz filtrada, sem sol direto",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "tropical",
+        "sensivel_sais"
+      ],
+      "proibicoes": [],
+      "historico": "Sensível a sais e cloro da água.",
+      "params_origem": "inventario",
+      "alertas": []
+    },
+    {
+      "id": "P22",
+      "ficha": null,
+      "nome_popular": "Tradescantia zebrina / Lambari",
+      "nome_cientifico": "Tradescantia zebrina",
+      "grupo": 2,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": 6.0,
+      "ph_max": 7.0,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 3,
+      "luz": "Luz filtrada a meia-sombra",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "tropical"
+      ],
+      "proibicoes": [],
+      "historico": "",
+      "params_origem": "inventario",
+      "alertas": []
+    },
+    {
+      "id": "P23",
+      "ficha": null,
+      "nome_popular": "Coleus (coração-magoado)",
+      "nome_cientifico": "Coleus scutellarioides",
+      "grupo": 2,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": 6.0,
+      "ph_max": 7.0,
+      "rega_gatilho_min": 3,
+      "rega_gatilho_max": 3,
+      "luz": "Meia-sombra",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "tropical"
+      ],
+      "proibicoes": [],
+      "historico": "pH 6,5. Histórico de cochonilha: neem + detergente neutro à noite.",
+      "params_origem": "inventario",
+      "alertas": []
+    },
+    {
+      "id": "P24",
+      "ficha": null,
+      "nome_popular": "Dinheiro-em-penca",
+      "nome_cientifico": "Callisia repens",
+      "grupo": 2,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": "Estacas",
+      "zona": null,
+      "ph_min": 6.0,
+      "ph_max": 7.0,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 3,
+      "luz": "Luz filtrada",
+      "vaso": "Vaso suspenso",
+      "substrato": "60% terra, 20% perlita, 20% vermiculita",
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "tropical"
+      ],
+      "proibicoes": [],
+      "historico": "",
+      "params_origem": "inventario",
+      "alertas": []
+    },
+    {
+      "id": "P25",
+      "ficha": null,
+      "nome_popular": "Pilea (planta-chinesa-do-dinheiro)",
+      "nome_cientifico": "Pilea peperomioides",
+      "grupo": 2,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": 6.0,
+      "ph_max": 7.0,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 2,
+      "luz": "Luz clara indireta",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "tropical"
+      ],
+      "proibicoes": [],
+      "historico": "Dois galhos; o menor perdeu todas as folhas de uma vez. Histórico de estresse hídrico e estiolamento.",
+      "params_origem": "inventario",
+      "alertas": []
+    },
+    {
+      "id": "P26",
+      "ficha": null,
+      "nome_popular": "Manjericão",
+      "nome_cientifico": "Ocimum basilicum",
+      "grupo": 2,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": 6.0,
+      "ph_max": 7.0,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 3,
+      "luz": "Transição gradual para sol",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "erva"
+      ],
+      "proibicoes": [],
+      "historico": "Desponte feito. Já sofreu queima por sabão concentrado.",
+      "params_origem": "inventario",
+      "alertas": []
+    },
+    {
+      "id": "P27",
+      "ficha": null,
+      "nome_popular": "Abacaxi-roxo",
+      "nome_cientifico": "Tradescantia spathacea",
+      "grupo": 2,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": 6.0,
+      "ph_max": 7.0,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 3,
+      "luz": "Meia-sombra a sol",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [],
+      "proibicoes": [],
+      "historico": "Transplante corretivo feito.",
+      "params_origem": "sugerido",
+      "alertas": []
+    },
+    {
+      "id": "P28",
+      "ficha": null,
+      "nome_popular": "Guiné",
+      "nome_cientifico": "Petiveria alliacea",
+      "grupo": 2,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": 6.0,
+      "ph_max": 7.0,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 3,
+      "luz": "Meia-sombra",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [],
+      "proibicoes": [],
+      "historico": "Transplante corretivo feito.",
+      "params_origem": "sugerido",
+      "alertas": []
+    },
+    {
+      "id": "P29",
+      "ficha": null,
+      "nome_popular": "Pleomele",
+      "nome_cientifico": "Dracaena reflexa",
+      "grupo": 2,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": "Estaquia de 90 cm",
+      "zona": null,
+      "ph_min": 6.0,
+      "ph_max": 6.5,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 3,
+      "luz": "Luz filtrada a meia-sombra",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [],
+      "proibicoes": [],
+      "historico": "Transplante corretivo feito.",
+      "params_origem": "sugerido",
+      "alertas": []
+    },
+    {
+      "id": "P30",
+      "ficha": null,
+      "nome_popular": "Bambu-da-sorte",
+      "nome_cientifico": "Dracaena sanderiana",
+      "grupo": 2,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": null,
+      "ph_max": null,
+      "rega_gatilho_min": null,
+      "rega_gatilho_max": null,
+      "luz": "Luz indireta",
+      "vaso": "Cultivo em água/gel",
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [],
+      "proibicoes": [],
+      "historico": "Leve depósito calcário.",
+      "params_origem": "inventario",
+      "alertas": []
+    },
+    {
+      "id": "P31",
+      "ficha": 47,
+      "nome_popular": "Filodendro",
+      "nome_cientifico": "Philodendron sp.",
+      "grupo": 2,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": "2026-09-27",
+      "origem": null,
+      "zona": null,
+      "ph_min": 5.5,
+      "ph_max": 6.5,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 3,
+      "luz": "Luz filtrada",
+      "vaso": "Vaso (não pendente)",
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "tropical"
+      ],
+      "proibicoes": [],
+      "historico": "Chegou praticamente sem raiz.",
+      "params_origem": "sugerido",
+      "alertas": [
+        "Ficha nº 47 com questionário pendente.",
+        "Espécie não identificada — usar o escaneamento."
+      ]
+    },
+    {
+      "id": "P32",
+      "ficha": 52,
+      "nome_popular": "Samambaia Duffii",
+      "nome_cientifico": "Nephrolepis cordifolia 'Duffii'",
+      "grupo": 2,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": "2026-09-30",
+      "origem": "Presente",
+      "zona": "Varanda, sobre caixote",
+      "ph_min": 6.0,
+      "ph_max": 7.0,
+      "rega_gatilho_min": 3,
+      "rega_gatilho_max": 4,
+      "luz": "Luz filtrada",
+      "vaso": "Plástico preto quadrado",
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "tropical"
+      ],
+      "proibicoes": [],
+      "historico": "",
+      "params_origem": "sugerido",
+      "alertas": [
+        "Ficha nº 52 com questionário pendente."
+      ]
+    },
+    {
+      "id": "P33",
+      "ficha": null,
+      "nome_popular": "Azaleia sokan (tronco duplo)",
+      "nome_cientifico": "Rhododendron simsii (sokan)",
+      "grupo": 3,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": 5.0,
+      "ph_max": 6.0,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 3,
+      "luz": "Sol da manhã",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "acidofila",
+        "em_formacao",
+        "bonsai"
+      ],
+      "proibicoes": [],
+      "historico": "Projeto de tronco duplo, Fase 1–2. Caso que originou o protocolo de escarificação do torrão. Deadheading das flores secas.",
+      "params_origem": "inventario",
+      "alertas": [
+        "Registro antigo de 'água de chuva/filtrada' foi substituído: água de torneira + acidificação com vinagre."
+      ]
+    },
+    {
+      "id": "P34",
+      "ficha": null,
+      "nome_popular": "Azaleias (jardineira comunitária)",
+      "nome_cientifico": "Rhododendron sp.",
+      "grupo": 3,
+      "quantidade": 4,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": 5.0,
+      "ph_max": 6.0,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 3,
+      "luz": "Sol da manhã",
+      "vaso": "Jardineira comunitária",
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "acidofila",
+        "lote"
+      ],
+      "proibicoes": [],
+      "historico": "",
+      "params_origem": "inventario",
+      "alertas": []
+    },
+    {
+      "id": "P35",
+      "ficha": null,
+      "nome_popular": "Ixora",
+      "nome_cientifico": "Ixora coccinea",
+      "grupo": 3,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": 5.0,
+      "ph_max": 6.0,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 3,
+      "luz": "Sol pleno a meia-sombra",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": "Forth Flores",
+      "objetivo": null,
+      "tags": [
+        "acidofila"
+      ],
+      "proibicoes": [],
+      "historico": "pH 5,5 estável. Sem podas estruturais (preservar inflorescências). Histórico de fumagina, lagartas e cochonilhas: sabão + neem.",
+      "params_origem": "inventario",
+      "alertas": []
+    },
+    {
+      "id": "P36",
+      "ficha": null,
+      "nome_popular": "Hortênsia",
+      "nome_cientifico": "Hydrangea macrophylla",
+      "grupo": 3,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": null,
+      "ph_max": null,
+      "rega_gatilho_min": 3,
+      "rega_gatilho_max": 3,
+      "luz": "Sol da manhã, sombra à tarde",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "cor_por_ph"
+      ],
+      "proibicoes": [],
+      "historico": "Cor depende de pH + alumínio; fósforo alto bloqueia o alumínio e volta para rosa.",
+      "params_origem": "inventario",
+      "alertas": [
+        "Definir a cor desejada: se azul, Forth Flores fica proibido e pH alvo 5,0–5,5; se rosa, pH 6,0–6,5."
+      ]
+    },
+    {
+      "id": "P37",
+      "ficha": null,
+      "nome_popular": "Dipladênia vermelha/rosa",
+      "nome_cientifico": "Mandevilla sp.",
+      "grupo": 3,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": 6.0,
+      "ph_max": 7.0,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 2,
+      "luz": "Sol direto 14h30–18h",
+      "vaso": "16 L",
+      "substrato": null,
+      "adubacao": "Forth Jardim semanal desde início de set/2026 (exceção à pausa)",
+      "objetivo": null,
+      "tags": [
+        "trepadeira",
+        "excecao_pausa",
+        "em_formacao"
+      ],
+      "proibicoes": [
+        "vermiculita"
+      ],
+      "historico": "25/09/2026: broto de ponta secando e flor abortada; teste de tripes negativo; rega suspensa até o colo marcar nível 2.",
+      "params_origem": "inventario",
+      "alertas": []
+    },
+    {
+      "id": "P38",
+      "ficha": null,
+      "nome_popular": "Dipladênia branca",
+      "nome_cientifico": "Mandevilla sp.",
+      "grupo": 3,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": 6.0,
+      "ph_max": 7.0,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 2,
+      "luz": "Sol direto 14h30–18h",
+      "vaso": "Balde de 16 L, suspenso ~20 cm do chão",
+      "substrato": null,
+      "adubacao": "Forth Jardim semanal desde início de set/2026 (exceção à pausa)",
+      "objetivo": null,
+      "tags": [
+        "trepadeira",
+        "excecao_pausa",
+        "em_formacao"
+      ],
+      "proibicoes": [
+        "vermiculita"
+      ],
+      "historico": "Crescimento lento, brotos pequenos. Conduzida em tela de arame ao lado da vermelha (~30 cm). Transplante descartado em 30/09/2026. Medidor no colo sempre marca nível 3.",
+      "params_origem": "inventario",
+      "alertas": [
+        "Orientação em conflito: registro antigo diz leste/nordeste por ser sensível ao sol; registro de 25/09/2026 diz sol 14h30–18h. Confirmar."
+      ]
+    },
+    {
+      "id": "P39",
+      "ficha": null,
+      "nome_popular": "Mini-roseira vermelha",
+      "nome_cientifico": "Rosa chinensis",
+      "grupo": 3,
+      "quantidade": 3,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": 6.0,
+      "ph_max": 6.5,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 3,
+      "luz": "Sol pleno",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "rega_na_base"
+      ],
+      "proibicoes": [],
+      "historico": "3 caules pós-cirurgia (1 isolado, 2 agrupados). Rega só na base (evitar oídio e mancha-negra).",
+      "params_origem": "inventario",
+      "alertas": []
+    },
+    {
+      "id": "P40",
+      "ficha": null,
+      "nome_popular": "Trevo-de-quatro-folhas",
+      "nome_cientifico": "Oxalis tetraphylla",
+      "grupo": 3,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": 6.0,
+      "ph_max": 7.0,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 3,
+      "luz": "Sol da manhã",
+      "vaso": null,
+      "substrato": "50% terra vegetal + 30% perlita + 20% húmus",
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [],
+      "proibicoes": [],
+      "historico": "Cultivado a partir de bulbos.",
+      "params_origem": "inventario",
+      "alertas": []
+    },
+    {
+      "id": "P41",
+      "ficha": null,
+      "nome_popular": "Buganvília 'Morganville'",
+      "nome_cientifico": "Bougainvillea sp.",
+      "grupo": 3,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": "Estrutura/pilastra",
+      "ph_min": 5.5,
+      "ph_max": 6.5,
+      "rega_gatilho_min": 1,
+      "rega_gatilho_max": 2,
+      "luz": "Sol pleno",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": "Forth Jardim (sem Forth Flores)",
+      "objetivo": null,
+      "tags": [
+        "em_formacao",
+        "espaldeira",
+        "estresse_seco_floracao"
+      ],
+      "proibicoes": [
+        "forth_flores"
+      ],
+      "historico": "Principal projeto estrutural, em espaldeira, fase de engrossamento do tronco. Poda em 11/09/2026; brotação múltipla vigorosa em 28/09/2026. Ladrão basal marcado para remoção.",
+      "params_origem": "inventario",
+      "alertas": [
+        "Conflito: um registro diz adubação pausada desde junho; o mais recente diz fertirrigação com Forth Jardim desde junho. Prevalece o mais recente — confirmar."
+      ]
+    },
+    {
+      "id": "P42",
+      "ficha": null,
+      "nome_popular": "Estacas de buganvília",
+      "nome_cientifico": "Bougainvillea sp.",
+      "grupo": 3,
+      "quantidade": 2,
+      "status": "em_propagacao",
+      "data_entrada": "2026-08-12",
+      "origem": "Estaca",
+      "zona": null,
+      "ph_min": 5.5,
+      "ph_max": 6.5,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 3,
+      "luz": "Luz indireta",
+      "vaso": "Copinhos em câmara úmida de PET",
+      "substrato": "Areia grossa + vermiculita",
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "propagacao"
+      ],
+      "proibicoes": [],
+      "historico": "",
+      "params_origem": "inventario",
+      "alertas": []
+    },
+    {
+      "id": "P43",
+      "ficha": null,
+      "nome_popular": "Lantana (cambará)",
+      "nome_cientifico": "Lantana camara",
+      "grupo": 3,
+      "quantidade": 1,
+      "status": "em_propagacao",
+      "data_entrada": null,
+      "origem": "Estaca",
+      "zona": null,
+      "ph_min": 6.0,
+      "ph_max": 7.0,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 2,
+      "luz": "Sol pleno",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "propagacao"
+      ],
+      "proibicoes": [],
+      "historico": "Enraizada há 45+ dias (em set/2026); flores precoces removidas.",
+      "params_origem": "inventario",
+      "alertas": []
+    },
+    {
+      "id": "P44",
+      "ficha": null,
+      "nome_popular": "Mirra A",
+      "nome_cientifico": "Tetradenia riparia",
+      "grupo": 3,
+      "quantidade": 1,
+      "status": "em_propagacao",
+      "data_entrada": null,
+      "origem": "Estaca",
+      "zona": null,
+      "ph_min": 6.0,
+      "ph_max": 7.0,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 2,
+      "luz": "Sol pleno",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "propagacao"
+      ],
+      "proibicoes": [
+        "vermiculita"
+      ],
+      "historico": "Enraizada; dose diferenciada da B.",
+      "params_origem": "inventario",
+      "alertas": []
+    },
+    {
+      "id": "P45",
+      "ficha": null,
+      "nome_popular": "Mirra B",
+      "nome_cientifico": "Tetradenia riparia",
+      "grupo": 3,
+      "quantidade": 1,
+      "status": "em_propagacao",
+      "data_entrada": null,
+      "origem": "Estaca",
+      "zona": null,
+      "ph_min": 6.0,
+      "ph_max": 7.0,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 2,
+      "luz": "Sol pleno",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "propagacao"
+      ],
+      "proibicoes": [
+        "vermiculita"
+      ],
+      "historico": "Enraizada; dose diferenciada da A.",
+      "params_origem": "inventario",
+      "alertas": []
+    },
+    {
+      "id": "P46",
+      "ficha": null,
+      "nome_popular": "Gerânio",
+      "nome_cientifico": "Pelargonium sp.",
+      "grupo": 4,
+      "quantidade": 2,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": 6.0,
+      "ph_max": 7.0,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 2,
+      "luz": "~3 h de sol direto",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [],
+      "proibicoes": [],
+      "historico": "Eram 6; 4 morreram com caule seco por inteiro (relatado 25/09/2026). As 2 sobreviventes estão rebrotando.",
+      "params_origem": "inventario",
+      "alertas": []
+    },
+    {
+      "id": "P47",
+      "ficha": 48,
+      "nome_popular": "Caládio — branco com nervuras verdes",
+      "nome_cientifico": "Caladium bicolor",
+      "grupo": 4,
+      "quantidade": 1,
+      "status": "a_plantar",
+      "data_entrada": "2026-09-28",
+      "origem": "Comprado (tubérculo)",
+      "zona": null,
+      "ph_min": 5.5,
+      "ph_max": 6.5,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 3,
+      "luz": "Luz filtrada; meia-sombra",
+      "vaso": "4 L",
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [],
+      "proibicoes": [],
+      "historico": "",
+      "params_origem": "sugerido",
+      "alertas": [
+        "Correspondência entre as fichas 48–51 e as 4 variedades a confirmar."
+      ]
+    },
+    {
+      "id": "P48",
+      "ficha": 49,
+      "nome_popular": "Caládio — verde com nervura rosa",
+      "nome_cientifico": "Caladium bicolor",
+      "grupo": 4,
+      "quantidade": 1,
+      "status": "a_plantar",
+      "data_entrada": "2026-09-28",
+      "origem": "Comprado (tubérculo)",
+      "zona": null,
+      "ph_min": 5.5,
+      "ph_max": 6.5,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 3,
+      "luz": "Luz filtrada; meia-sombra",
+      "vaso": "4 L",
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [],
+      "proibicoes": [],
+      "historico": "",
+      "params_origem": "sugerido",
+      "alertas": [
+        "Correspondência entre as fichas 48–51 e as 4 variedades a confirmar."
+      ]
+    },
+    {
+      "id": "P49",
+      "ficha": 50,
+      "nome_popular": "Caládio — centro branco pintado de verde",
+      "nome_cientifico": "Caladium bicolor",
+      "grupo": 4,
+      "quantidade": 1,
+      "status": "a_plantar",
+      "data_entrada": "2026-09-28",
+      "origem": "Comprado (tubérculo)",
+      "zona": null,
+      "ph_min": 5.5,
+      "ph_max": 6.5,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 3,
+      "luz": "Luz filtrada; meia-sombra",
+      "vaso": "4 L",
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [],
+      "proibicoes": [],
+      "historico": "",
+      "params_origem": "sugerido",
+      "alertas": [
+        "Correspondência entre as fichas 48–51 e as 4 variedades a confirmar."
+      ]
+    },
+    {
+      "id": "P50",
+      "ficha": 51,
+      "nome_popular": "Caládio — verde pintado de branco e rosa",
+      "nome_cientifico": "Caladium bicolor",
+      "grupo": 4,
+      "quantidade": 1,
+      "status": "a_plantar",
+      "data_entrada": "2026-09-28",
+      "origem": "Comprado (tubérculo)",
+      "zona": null,
+      "ph_min": 5.5,
+      "ph_max": 6.5,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 3,
+      "luz": "Luz filtrada; meia-sombra",
+      "vaso": "4 L",
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [],
+      "proibicoes": [],
+      "historico": "",
+      "params_origem": "sugerido",
+      "alertas": [
+        "Correspondência entre as fichas 48–51 e as 4 variedades a confirmar."
+      ]
+    },
+    {
+      "id": "P51",
+      "ficha": null,
+      "nome_popular": "Alocasia cucullata",
+      "nome_cientifico": "Alocasia cucullata",
+      "grupo": 4,
+      "quantidade": 1,
+      "status": "pendente_confirmacao",
+      "data_entrada": "2026-10-03",
+      "origem": "Presente (muda)",
+      "zona": null,
+      "ph_min": 5.5,
+      "ph_max": 6.5,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 3,
+      "luz": "Luz filtrada",
+      "vaso": "Caixinha de leite; vaso de 4 L comprado",
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "tropical"
+      ],
+      "proibicoes": [],
+      "historico": "",
+      "params_origem": "sugerido",
+      "alertas": [
+        "Inclusão no inventário ainda não confirmada."
+      ]
+    },
+    {
+      "id": "P52",
+      "ficha": null,
+      "nome_popular": "Beijo-de-frade",
+      "nome_cientifico": "Impatiens sp.",
+      "grupo": 4,
+      "quantidade": 2,
+      "status": "pendente_confirmacao",
+      "data_entrada": "2026-09-27",
+      "origem": null,
+      "zona": null,
+      "ph_min": 5.8,
+      "ph_max": 6.5,
+      "rega_gatilho_min": 3,
+      "rega_gatilho_max": 3,
+      "luz": "Meia-sombra",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [],
+      "proibicoes": [],
+      "historico": "",
+      "params_origem": "sugerido",
+      "alertas": [
+        "Inclusão no inventário ainda não confirmada."
+      ]
+    },
+    {
+      "id": "P53",
+      "ficha": null,
+      "nome_popular": "Pitanga",
+      "nome_cientifico": "Eugenia uniflora",
+      "grupo": 5,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": 5.5,
+      "ph_max": 6.5,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 3,
+      "luz": "Sol pleno",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "frutifera"
+      ],
+      "proibicoes": [],
+      "historico": "Estaquia tem baixo sucesso; preferir sementes (frutificação set–nov) ou alporquia.",
+      "params_origem": "sugerido",
+      "alertas": []
+    },
+    {
+      "id": "P54",
+      "ficha": null,
+      "nome_popular": "Jabuticaba",
+      "nome_cientifico": "Plinia cauliflora",
+      "grupo": 5,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": 5.5,
+      "ph_max": 6.5,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 3,
+      "luz": "Sol pleno",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "frutifera"
+      ],
+      "proibicoes": [],
+      "historico": "",
+      "params_origem": "sugerido",
+      "alertas": []
+    },
+    {
+      "id": "P55",
+      "ficha": null,
+      "nome_popular": "Acerola",
+      "nome_cientifico": "Malpighia emarginata",
+      "grupo": 5,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": 5.5,
+      "ph_max": 6.5,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 3,
+      "luz": "Sol pleno",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "frutifera"
+      ],
+      "proibicoes": [],
+      "historico": "",
+      "params_origem": "sugerido",
+      "alertas": []
+    },
+    {
+      "id": "P56",
+      "ficha": null,
+      "nome_popular": "Figo",
+      "nome_cientifico": "Ficus carica",
+      "grupo": 5,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": "Estaca",
+      "zona": null,
+      "ph_min": 6.0,
+      "ph_max": 7.0,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 3,
+      "luz": "Sol pleno",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "frutifera"
+      ],
+      "proibicoes": [],
+      "historico": "",
+      "params_origem": "sugerido",
+      "alertas": []
+    },
+    {
+      "id": "P57",
+      "ficha": null,
+      "nome_popular": "Amora (bonsai)",
+      "nome_cientifico": "Morus nigra",
+      "grupo": 5,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": "2026-07-16",
+      "origem": "Estaca",
+      "zona": null,
+      "ph_min": 5.5,
+      "ph_max": 6.5,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 3,
+      "luz": "Sol pleno",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "frutifera",
+        "em_formacao",
+        "bonsai"
+      ],
+      "proibicoes": [],
+      "historico": "Projeto de bonsai; plantada ~16/07/2026.",
+      "params_origem": "sugerido",
+      "alertas": []
+    },
+    {
+      "id": "P58",
+      "ficha": null,
+      "nome_popular": "Pimenta dedo-de-moça",
+      "nome_cientifico": "Capsicum baccatum",
+      "grupo": 5,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": "2026-08",
+      "origem": "Semente",
+      "zona": null,
+      "ph_min": 6.0,
+      "ph_max": 6.8,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 3,
+      "luz": "Sol pleno",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "horta"
+      ],
+      "proibicoes": [],
+      "historico": "Semeadura fim de ago/2026. Retirar as primeiras flores nov–dez; colheita fev–mar/2027.",
+      "params_origem": "sugerido",
+      "alertas": []
+    },
+    {
+      "id": "P59",
+      "ficha": null,
+      "nome_popular": "Tomate-cereja",
+      "nome_cientifico": "Solanum lycopersicum var. cerasiforme",
+      "grupo": 5,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": "2026-09",
+      "origem": "Semente",
+      "zona": null,
+      "ph_min": 6.0,
+      "ph_max": 6.8,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 3,
+      "luz": "Sol pleno",
+      "vaso": "Cesto suspenso mínimo 12–15 L (destino)",
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "horta"
+      ],
+      "proibicoes": [],
+      "historico": "Semeadura meados de set/2026; colheita prevista dez–fev.",
+      "params_origem": "sugerido",
+      "alertas": [
+        "Variedade (pendente ou determinada) a confirmar."
+      ]
+    },
+    {
+      "id": "P60",
+      "ficha": null,
+      "nome_popular": "Cebolinha",
+      "nome_cientifico": "Allium fistulosum",
+      "grupo": 5,
+      "quantidade": 1,
+      "status": "ativa",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": 6.0,
+      "ph_max": 7.0,
+      "rega_gatilho_min": 3,
+      "rega_gatilho_max": 3,
+      "luz": "Sol pleno",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "horta"
+      ],
+      "proibicoes": [],
+      "historico": "",
+      "params_origem": "sugerido",
+      "alertas": []
+    },
+    {
+      "id": "P61",
+      "ficha": null,
+      "nome_popular": "Mangueira",
+      "nome_cientifico": "Mangifera indica",
+      "grupo": 5,
+      "quantidade": 1,
+      "status": "dormencia_induzida",
+      "data_entrada": null,
+      "origem": null,
+      "zona": null,
+      "ph_min": 5.5,
+      "ph_max": 7.0,
+      "rega_gatilho_min": 1,
+      "rega_gatilho_max": 2,
+      "luz": "Sol pleno",
+      "vaso": null,
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [
+        "frutifera",
+        "sem_adubacao"
+      ],
+      "proibicoes": [
+        "adubacao"
+      ],
+      "historico": "Desfolha drástica por familiar em ~jul/2026. Recuperação por dormência induzida: sem adubação, rega mínima. Transplante adiado para out/2027.",
+      "params_origem": "sugerido",
+      "alertas": []
+    },
+    {
+      "id": "P62",
+      "ficha": null,
+      "nome_popular": "Cravina",
+      "nome_cientifico": "Dianthus barbatus",
+      "grupo": 5,
+      "quantidade": 1,
+      "status": "a_semear",
+      "data_entrada": null,
+      "origem": "Sementes compradas em set/2026",
+      "zona": null,
+      "ph_min": 6.5,
+      "ph_max": 7.5,
+      "rega_gatilho_min": 2,
+      "rega_gatilho_max": 2,
+      "luz": "Sol pleno",
+      "vaso": "Jardineira retangular (limpar restos secos antes)",
+      "substrato": null,
+      "adubacao": null,
+      "objetivo": null,
+      "tags": [],
+      "proibicoes": [],
+      "historico": "",
+      "params_origem": "sugerido",
+      "alertas": []
+    }
+  ],
+  "lista_desejos": [
+    {
+      "id": "D01",
+      "nome": "Alocasia 'Polly'",
+      "especie": "Alocasia × amazonica 'Polly'",
+      "prioridade": "alta",
+      "zona_compativel": "Luz filtrada",
+      "epoca_compra": null,
+      "preco_alvo": null,
+      "observacao": "Melhor opção de Alocasia para o cerrado."
+    },
+    {
+      "id": "D02",
+      "nome": "Alocasia 'Black Velvet'",
+      "especie": "Alocasia reginula",
+      "prioridade": "baixa",
+      "zona_compativel": "Luz filtrada, umidade alta",
+      "epoca_compra": null,
+      "preco_alvo": null,
+      "observacao": "A mais exigente das candidatas."
+    }
+  ],
+  "eventos": [
+    {
+      "data": "2026-06",
+      "planta_id": "P01",
+      "tipo": "transplante",
+      "produto": null,
+      "dose_g_l": null,
+      "volume_ml": null,
+      "observacao": "Resgate; transplante para cuia de barro com caudex elevado."
+    },
+    {
+      "data": "2026-07-16",
+      "planta_id": "P57",
+      "tipo": "plantio",
+      "produto": null,
+      "dose_g_l": null,
+      "volume_ml": null,
+      "observacao": "Estaca de amora plantada (projeto bonsai)."
+    },
+    {
+      "data": "2026-08-12",
+      "planta_id": "P42",
+      "tipo": "propagacao",
+      "produto": null,
+      "dose_g_l": null,
+      "volume_ml": null,
+      "observacao": "2 estacas em areia grossa + vermiculita, câmara úmida de PET."
+    },
+    {
+      "data": "2026-09-11",
+      "planta_id": "P41",
+      "tipo": "poda",
+      "produto": null,
+      "dose_g_l": null,
+      "volume_ml": null,
+      "observacao": "Poda da Morganville."
+    },
+    {
+      "data": "2026-09-18",
+      "planta_id": "P01",
+      "tipo": "adubacao",
+      "produto": null,
+      "dose_g_l": null,
+      "volume_ml": null,
+      "observacao": "Sulfato de magnésio 1 g/L."
+    },
+    {
+      "data": "2026-09-18",
+      "planta_id": null,
+      "tipo": "adubacao",
+      "produto": null,
+      "dose_g_l": null,
+      "volume_ml": null,
+      "observacao": "Sulfato de magnésio 1 g/L em todas as plantas sob adubação ativa."
+    },
+    {
+      "data": "2026-09-19",
+      "planta_id": "P15",
+      "tipo": "tutoramento",
+      "produto": null,
+      "dose_g_l": null,
+      "volume_ml": null,
+      "observacao": "Tutor de fibra de coco instalado encostado no caule."
+    },
+    {
+      "data": "2026-09-19",
+      "planta_id": "P15",
+      "tipo": "reposicionamento",
+      "produto": null,
+      "dose_g_l": null,
+      "volume_ml": null,
+      "observacao": "Para a varanda, sol direto 17h–18h."
+    },
+    {
+      "data": "2026-09-19",
+      "planta_id": "P16",
+      "tipo": "reposicionamento",
+      "produto": null,
+      "dose_g_l": null,
+      "volume_ml": null,
+      "observacao": "Para a varanda, sol direto 17h–18h."
+    },
+    {
+      "data": "2026-09-19",
+      "planta_id": "P17",
+      "tipo": "reposicionamento",
+      "produto": null,
+      "dose_g_l": null,
+      "volume_ml": null,
+      "observacao": "Para a varanda, sol direto 17h–18h."
+    },
+    {
+      "data": "2026-09-19",
+      "planta_id": "P18",
+      "tipo": "reposicionamento",
+      "produto": null,
+      "dose_g_l": null,
+      "volume_ml": null,
+      "observacao": "Para a varanda, sol direto 17h–18h."
+    },
+    {
+      "data": "2026-09-25",
+      "planta_id": null,
+      "tipo": "lixiviacao",
+      "produto": null,
+      "dose_g_l": null,
+      "volume_ml": null,
+      "observacao": "Lixiviação geral em todas as plantas."
+    },
+    {
+      "data": "2026-09-25",
+      "planta_id": "P37",
+      "tipo": "observacao",
+      "produto": null,
+      "dose_g_l": null,
+      "volume_ml": null,
+      "observacao": "Broto de ponta secando e flor abortada; tripes negativo; rega suspensa até nível 2."
+    },
+    {
+      "data": "2026-09-25",
+      "planta_id": "P46",
+      "tipo": "observacao",
+      "produto": null,
+      "dose_g_l": null,
+      "volume_ml": null,
+      "observacao": "4 gerânios mortos (caule seco); 2 sobreviventes rebrotando."
+    },
+    {
+      "data": "2026-09-27",
+      "planta_id": "P31",
+      "tipo": "plantio",
+      "produto": null,
+      "dose_g_l": null,
+      "volume_ml": null,
+      "observacao": "Filodendro praticamente sem raiz plantado em vaso."
+    },
+    {
+      "data": "2026-09-27",
+      "planta_id": "P52",
+      "tipo": "chegada",
+      "produto": null,
+      "dose_g_l": null,
+      "volume_ml": null,
+      "observacao": "2 mudas de beijo-de-frade recebidas."
+    },
+    {
+      "data": "2026-09-28",
+      "planta_id": "P41",
+      "tipo": "observacao",
+      "produto": null,
+      "dose_g_l": null,
+      "volume_ml": null,
+      "observacao": "Brotação múltipla vigorosa nos pontos de corte, folhas novas bronzeadas."
+    },
+    {
+      "data": "2026-09-28",
+      "planta_id": "P47",
+      "tipo": "chegada",
+      "produto": null,
+      "dose_g_l": null,
+      "volume_ml": null,
+      "observacao": "Tubérculo comprado."
+    },
+    {
+      "data": "2026-09-28",
+      "planta_id": "P48",
+      "tipo": "chegada",
+      "produto": null,
+      "dose_g_l": null,
+      "volume_ml": null,
+      "observacao": "Tubérculo comprado."
+    },
+    {
+      "data": "2026-09-28",
+      "planta_id": "P49",
+      "tipo": "chegada",
+      "produto": null,
+      "dose_g_l": null,
+      "volume_ml": null,
+      "observacao": "Tubérculo comprado."
+    },
+    {
+      "data": "2026-09-28",
+      "planta_id": "P50",
+      "tipo": "chegada",
+      "produto": null,
+      "dose_g_l": null,
+      "volume_ml": null,
+      "observacao": "Tubérculo comprado."
+    },
+    {
+      "data": "2026-09-30",
+      "planta_id": "P32",
+      "tipo": "chegada",
+      "produto": null,
+      "dose_g_l": null,
+      "volume_ml": null,
+      "observacao": "Recebida de presente; identificada por foto."
+    },
+    {
+      "data": "2026-09-30",
+      "planta_id": "P38",
+      "tipo": "decisao",
+      "produto": null,
+      "dose_g_l": null,
+      "volume_ml": null,
+      "observacao": "Transplante descartado: planta vai trepar na grade; tratar no próprio vaso."
+    },
+    {
+      "data": "2026-10-03",
+      "planta_id": "P51",
+      "tipo": "chegada",
+      "produto": null,
+      "dose_g_l": null,
+      "volume_ml": null,
+      "observacao": "Muda recebida em caixinha de leite; vaso de 4 L comprado."
+    }
+  ],
+  "pendencias": [
+    {
+      "data_prevista": "2026-10-07",
+      "planta_id": "P42",
+      "acao": "Avaliação final das estacas de buganvília.",
+      "concluida_em": null
+    },
+    {
+      "data_prevista": "2026-10-15",
+      "planta_id": "P58",
+      "acao": "Transplante da pimenta dedo-de-moça.",
+      "concluida_em": null
+    },
+    {
+      "data_prevista": "2026-10-15",
+      "planta_id": "P59",
+      "acao": "Transplante do tomate-cereja para cesto de 12–15 L.",
+      "concluida_em": null
+    },
+    {
+      "data_prevista": "2026-10-15",
+      "planta_id": "P60",
+      "acao": "Colheita total da cebolinha.",
+      "concluida_em": null
+    },
+    {
+      "data_prevista": "2026-10",
+      "planta_id": "P43",
+      "acao": "Transplante da lantana.",
+      "concluida_em": null
+    },
+    {
+      "data_prevista": "2026-10",
+      "planta_id": "P44",
+      "acao": "Transplante da mirra A (sem vermiculita).",
+      "concluida_em": null
+    },
+    {
+      "data_prevista": "2026-10",
+      "planta_id": "P45",
+      "acao": "Transplante da mirra B (sem vermiculita).",
+      "concluida_em": null
+    },
+    {
+      "data_prevista": "2026-10",
+      "planta_id": "P13",
+      "acao": "Transplante para cuia suspensa de 900 ml.",
+      "concluida_em": null
+    },
+    {
+      "data_prevista": "2026-10",
+      "planta_id": "P14",
+      "acao": "Transplante (separado da decapitação).",
+      "concluida_em": null
+    },
+    {
+      "data_prevista": "2026-10",
+      "planta_id": "P14",
+      "acao": "Decapitação para corrigir estiolamento (não no mesmo dia do transplante).",
+      "concluida_em": null
+    },
+    {
+      "data_prevista": "2026-10",
+      "planta_id": "P12",
+      "acao": "Renovação do substrato.",
+      "concluida_em": null
+    },
+    {
+      "data_prevista": "2026-10",
+      "planta_id": "P33",
+      "acao": "Transição para Fase 3 (engrossamento do tronco).",
+      "concluida_em": null
+    },
+    {
+      "data_prevista": "2026-10",
+      "planta_id": "P41",
+      "acao": "Poda estrutural + retomada do Forth Jardim; remover ladrão basal.",
+      "concluida_em": null
+    },
+    {
+      "data_prevista": "2026-10",
+      "planta_id": "P38",
+      "acao": "Corrigir a orientação da treliça.",
+      "concluida_em": null
+    },
+    {
+      "data_prevista": "2026-10",
+      "planta_id": "P37",
+      "acao": "Corrigir a orientação da treliça.",
+      "concluida_em": null
+    },
+    {
+      "data_prevista": "2026-10",
+      "planta_id": "P47",
+      "acao": "Plantar tubérculo em vaso de 4 L.",
+      "concluida_em": null
+    },
+    {
+      "data_prevista": "2026-10",
+      "planta_id": "P48",
+      "acao": "Plantar tubérculo em vaso de 4 L.",
+      "concluida_em": null
+    },
+    {
+      "data_prevista": "2026-10",
+      "planta_id": "P49",
+      "acao": "Plantar tubérculo em vaso de 4 L.",
+      "concluida_em": null
+    },
+    {
+      "data_prevista": "2026-10",
+      "planta_id": "P50",
+      "acao": "Plantar tubérculo em vaso de 4 L.",
+      "concluida_em": null
+    },
+    {
+      "data_prevista": "2026-10",
+      "planta_id": "P51",
+      "acao": "Transplantar para o vaso de 4 L.",
+      "concluida_em": null
+    },
+    {
+      "data_prevista": "2026-10",
+      "planta_id": "P62",
+      "acao": "Limpar a jardineira e semear a cravina.",
+      "concluida_em": null
+    },
+    {
+      "data_prevista": "2026-10",
+      "planta_id": null,
+      "acao": "Retomada geral da adubação.",
+      "concluida_em": null
+    },
+    {
+      "data_prevista": "2027-03",
+      "planta_id": "P33",
+      "acao": "Primeira poda seletiva após a floração (primavera de 2027 — confirmar mês).",
+      "concluida_em": null
+    },
+    {
+      "data_prevista": "2027-10",
+      "planta_id": "P61",
+      "acao": "Transplante da mangueira.",
+      "concluida_em": null
+    }
+  ],
+  "projetos": [
+    {
+      "id": "PR01",
+      "nome": "Espaldeira da Morganville",
+      "plantas": [
+        "P41"
+      ],
+      "fase_atual": "Engrossamento do tronco",
+      "proximo_marco": "Out/2026: poda estrutural; desponte para bifurcação na junção do arame. Seca de 2027: estresse hídrico controlado para floração."
+    },
+    {
+      "id": "PR02",
+      "nome": "Azaleia tronco duplo",
+      "plantas": [
+        "P33"
+      ],
+      "fase_atual": "Fase 1–2",
+      "proximo_marco": "Out/2026–mar/2027: Fase 3 (engrossamento). Primeira poda seletiva após a floração de 2027."
+    },
+    {
+      "id": "PR03",
+      "nome": "Bonsai de amora",
+      "plantas": [
+        "P57"
+      ],
+      "fase_atual": "Enraizamento",
+      "proximo_marco": null
+    },
+    {
+      "id": "PR04",
+      "nome": "Espaldeira das dipladênias",
+      "plantas": [
+        "P37",
+        "P38"
+      ],
+      "fase_atual": "Condução em tela de arame",
+      "proximo_marco": "Out/2026: corrigir a orientação da treliça."
+    },
+    {
+      "id": "PR05",
+      "nome": "Adenium — reorganização e sementes",
+      "plantas": [
+        "P01"
+      ],
+      "fase_atual": "Floração",
+      "proximo_marco": "Após a floração: poda de reorganização, estaquia dos galhos podados e polinização manual."
+    },
+    {
+      "id": "PR06",
+      "nome": "Jardim de inverno na varanda lateral",
+      "plantas": [],
+      "fase_atual": "Planejamento",
+      "proximo_marco": "Decidir o layout dos caixotes nas duas zonas de luz."
+    }
+  ],
+  "zonas": [
+    {
+      "id": "Z01",
+      "nome": "Varanda lateral — frente",
+      "sol_direto": "a partir das 12h30"
+    },
+    {
+      "id": "Z02",
+      "nome": "Varanda lateral — canto do fundo",
+      "sol_direto": "16h30–18h"
+    },
+    {
+      "id": "Z03",
+      "nome": "Varanda (sol 17h–18h)",
+      "sol_direto": "17h–18h"
+    },
+    {
+      "id": "Z04",
+      "nome": "Sala",
+      "sol_direto": "luz difusa"
+    },
+    {
+      "id": "Z05",
+      "nome": "Estrutura/pilastra (Morganville)",
+      "sol_direto": "sol pleno"
+    }
+  ],
+  "insumos": [
+    {
+      "nome": "Terra vegetal",
+      "categoria": "estrutura",
+      "em_estoque": true,
+      "quantidade": null,
+      "unidade": null,
+      "observacao": null
+    },
+    {
+      "nome": "Casca de pinus nº 1 (fina)",
+      "categoria": "estrutura",
+      "em_estoque": true,
+      "quantidade": null,
+      "unidade": null,
+      "observacao": null
+    },
+    {
+      "nome": "Casca de pinus grossa",
+      "categoria": "estrutura",
+      "em_estoque": true,
+      "quantidade": null,
+      "unidade": null,
+      "observacao": "Não aparece no estoque de 27/09/2026 — confirmar."
+    },
+    {
+      "nome": "Areia grossa (desinfetada)",
+      "categoria": "estrutura",
+      "em_estoque": true,
+      "quantidade": null,
+      "unidade": null,
+      "observacao": "Único drenante mineral disponível em 27/09/2026."
+    },
+    {
+      "nome": "Vermiculita",
+      "categoria": "estrutura",
+      "em_estoque": true,
+      "quantidade": null,
+      "unidade": null,
+      "observacao": null
+    },
+    {
+      "nome": "Fibra de coco (placa/tijolo prensado)",
+      "categoria": "estrutura",
+      "em_estoque": true,
+      "quantidade": null,
+      "unidade": null,
+      "observacao": null
+    },
+    {
+      "nome": "Carvão vegetal de churrasco",
+      "categoria": "estrutura",
+      "em_estoque": true,
+      "quantidade": null,
+      "unidade": null,
+      "observacao": "Disponível desde 03/10/2026; precisa ser quebrado/peneirado."
+    },
+    {
+      "nome": "Isopor triturado",
+      "categoria": "estrutura",
+      "em_estoque": true,
+      "quantidade": null,
+      "unidade": null,
+      "observacao": "Confirmar se ainda tem."
+    },
+    {
+      "nome": "Perlita",
+      "categoria": "estrutura",
+      "em_estoque": false,
+      "quantidade": 0,
+      "unidade": null,
+      "observacao": "Sem estoque desde 27/09/2026."
+    },
+    {
+      "nome": "Casca de arroz carbonizada",
+      "categoria": "estrutura",
+      "em_estoque": false,
+      "quantidade": 0,
+      "unidade": null,
+      "observacao": "Sem estoque desde 27/09/2026."
+    },
+    {
+      "nome": "Carvão fino",
+      "categoria": "estrutura",
+      "em_estoque": false,
+      "quantidade": 0,
+      "unidade": null,
+      "observacao": "Não tem."
+    },
+    {
+      "nome": "Húmus de minhoca",
+      "categoria": "nutricao",
+      "em_estoque": true,
+      "quantidade": null,
+      "unidade": null,
+      "observacao": null
+    },
+    {
+      "nome": "Esterco",
+      "categoria": "nutricao",
+      "em_estoque": true,
+      "quantidade": null,
+      "unidade": null,
+      "observacao": "Confirmar se ainda tem."
+    },
+    {
+      "nome": "Pó de basalto",
+      "categoria": "nutricao",
+      "em_estoque": true,
+      "quantidade": null,
+      "unidade": null,
+      "observacao": null
+    },
+    {
+      "nome": "Bokashi",
+      "categoria": "nutricao",
+      "em_estoque": true,
+      "quantidade": null,
+      "unidade": null,
+      "observacao": "Confirmar se ainda tem."
+    },
+    {
+      "nome": "Calcário dolomítico em pó",
+      "categoria": "correcao",
+      "em_estoque": true,
+      "quantidade": null,
+      "unidade": null,
+      "observacao": null
+    },
+    {
+      "nome": "Gesso agrícola",
+      "categoria": "correcao",
+      "em_estoque": true,
+      "quantidade": null,
+      "unidade": null,
+      "observacao": null
+    },
+    {
+      "nome": "Farinha de osso",
+      "categoria": "nutricao",
+      "em_estoque": true,
+      "quantidade": null,
+      "unidade": null,
+      "observacao": "Nunca junto com Forth Flores."
+    },
+    {
+      "nome": "Sulfato de magnésio",
+      "categoria": "nutricao",
+      "em_estoque": true,
+      "quantidade": null,
+      "unidade": null,
+      "observacao": null
+    },
+    {
+      "nome": "Fe-EDDHA",
+      "categoria": "nutricao",
+      "em_estoque": true,
+      "quantidade": null,
+      "unidade": null,
+      "observacao": null
+    },
+    {
+      "nome": "Forth Jardim 13-05-13",
+      "categoria": "npk",
+      "em_estoque": true,
+      "quantidade": null,
+      "unidade": null,
+      "observacao": "Adubo principal da fase vegetativa."
+    },
+    {
+      "nome": "Forth Flores 06-18-12",
+      "categoria": "npk",
+      "em_estoque": true,
+      "quantidade": null,
+      "unidade": null,
+      "observacao": "Fase de floração; ver proibições."
+    },
+    {
+      "nome": "Forth Rosa do Deserto 09-45-15",
+      "categoria": "npk",
+      "em_estoque": true,
+      "quantidade": null,
+      "unidade": null,
+      "observacao": null
+    },
+    {
+      "nome": "Ouro Verde 15-15-20 (pó solúvel)",
+      "categoria": "npk",
+      "em_estoque": true,
+      "quantidade": 30,
+      "unidade": "g",
+      "observacao": "Caixa de 30 g; em teste desde 03/10/2026."
+    },
+    {
+      "nome": "Óleo de neem",
+      "categoria": "fitossanidade",
+      "em_estoque": true,
+      "quantidade": null,
+      "unidade": null,
+      "observacao": null
+    },
+    {
+      "nome": "Sabão de potássio / detergente neutro",
+      "categoria": "fitossanidade",
+      "em_estoque": true,
+      "quantidade": null,
+      "unidade": null,
+      "observacao": "Aplicação noturna."
+    },
+    {
+      "nome": "Canela em pó",
+      "categoria": "fitossanidade",
+      "em_estoque": true,
+      "quantidade": null,
+      "unidade": null,
+      "observacao": "Cicatrizante/antifúngico."
+    },
+    {
+      "nome": "Vinagre branco",
+      "categoria": "correcao",
+      "em_estoque": true,
+      "quantidade": null,
+      "unidade": null,
+      "observacao": "Só na água de rega das acidófilas; nunca na folhagem."
+    }
+  ],
+  "ferramentas": [
+    "Medidor 4-em-1 (umidade 1–5, pH, luz 1–9, temperatura)",
+    "Balança de precisão",
+    "Seringas de 3 ml (graduação 0,1 ml)"
+  ],
+  "regras": [
+    {
+      "id": "R01",
+      "tipo": "bloquear",
+      "quando": {
+        "produto": "Forth Flores 06-18-12",
+        "planta_tem_proibicao": "forth_flores"
+      },
+      "mensagem": "Forth Flores é proibido para esta planta."
+    },
+    {
+      "id": "R02",
+      "tipo": "bloquear",
+      "quando": {
+        "insumo": "Vermiculita",
+        "planta_tem_proibicao": "vermiculita"
+      },
+      "mensagem": "Vermiculita é proibida para esta planta (risco de podridão)."
+    },
+    {
+      "id": "R03",
+      "tipo": "alertar",
+      "quando": {
+        "evento": "adubacao",
+        "mes_em": [
+          6,
+          7,
+          8,
+          9
+        ],
+        "planta_sem_tag": "excecao_pausa"
+      },
+      "mensagem": "Pausa geral de adubação de junho a setembro."
+    },
+    {
+      "id": "R04",
+      "tipo": "bloquear",
+      "quando": {
+        "combinacao_mesma_planta_30_dias": [
+          "Farinha de osso",
+          "Forth Flores 06-18-12"
+        ]
+      },
+      "mensagem": "Farinha de osso nunca junto com Forth Flores (acúmulo de fósforo)."
+    },
+    {
+      "id": "R05",
+      "tipo": "bloquear",
+      "quando": {
+        "evento": "acidificacao",
+        "planta_sem_tag": "acidofila"
+      },
+      "mensagem": "Acidificação com vinagre só nas acidófilas."
+    },
+    {
+      "id": "R06",
+      "tipo": "bloquear",
+      "quando": {
+        "aplicacao": "foliar",
+        "produto": "Vinagre branco"
+      },
+      "mensagem": "Vinagre na folhagem é proibido."
+    },
+    {
+      "id": "R07",
+      "tipo": "bloquear",
+      "quando": {
+        "produto_em": [
+          "K-Othrine",
+          "Amido de milho"
+        ]
+      },
+      "mensagem": "Produto proibido pelo protocolo."
+    },
+    {
+      "id": "R08",
+      "tipo": "bloquear",
+      "quando": {
+        "agua": "chuva"
+      },
+      "mensagem": "Usar exclusivamente água de torneira."
+    },
+    {
+      "id": "R09",
+      "tipo": "alertar",
+      "quando": {
+        "produto": "Anticloro"
+      },
+      "mensagem": "Anticloro não é usado rotineiramente: introduz sódio e distorce o medidor."
+    },
+    {
+      "id": "R10",
+      "tipo": "alertar",
+      "quando": {
+        "evento": "poda",
+        "percentual_area_foliar_maior_que": 33
+      },
+      "mensagem": "Nunca remover mais de 1/3 da área foliar."
+    },
+    {
+      "id": "R11",
+      "tipo": "alertar",
+      "quando": {
+        "evento_em": [
+          "transplante",
+          "poda_estrutural",
+          "renovacao_substrato"
+        ],
+        "mes_fora_de": [
+          10
+        ]
+      },
+      "mensagem": "Grandes intervenções são feitas em outubro, no início das chuvas."
+    },
+    {
+      "id": "R12",
+      "tipo": "bloquear",
+      "quando": {
+        "evento": "adubacao_liquida",
+        "planta_tem_tag_em": [
+          "periodo_seco",
+          "sem_adubacao"
+        ]
+      },
+      "mensagem": "Adubo líquido vai com a rega: não serve para planta em período seco ou dormência."
+    },
+    {
+      "id": "R13",
+      "tipo": "bloquear",
+      "quando": {
+        "evento": "adubacao",
+        "planta_tem_proibicao": "adubacao"
+      },
+      "mensagem": "Planta em dormência induzida: sem adubação."
+    },
+    {
+      "id": "R14",
+      "tipo": "alertar",
+      "quando": {
+        "evento": "transplante",
+        "planta_tem_proibicao": "transplante_duplo"
+      },
+      "mensagem": "Esta planta vai direto para o vaso definitivo; evitar segundo transplante."
+    },
+    {
+      "id": "R15",
+      "tipo": "alertar",
+      "quando": {
+        "evento": "decapitacao_e_transplante_mesmo_dia"
+      },
+      "mensagem": "Não combinar decapitação com transplante."
+    },
+    {
+      "id": "R16",
+      "tipo": "alertar",
+      "quando": {
+        "recomendacao_contem": "quarentena"
+      },
+      "mensagem": "Quarentena de 14 dias foi abandonada em 12/09/2026: inspeção → transplante com escarificação → integração."
+    },
+    {
+      "id": "R17",
+      "tipo": "alertar",
+      "quando": {
+        "lista_desejos_cor_impossivel": [
+          "caládio azul",
+          "morango azul",
+          "rosa arco-íris"
+        ]
+      },
+      "mensagem": "Cor impossível: indício de golpe na compra online."
+    },
+    {
+      "id": "R18",
+      "tipo": "alertar",
+      "quando": {
+        "produto": "Forth Flores 06-18-12",
+        "planta_tem_tag": "cor_por_ph"
+      },
+      "mensagem": "Hortênsia: fósforo alto bloqueia o alumínio. Se o objetivo é azul, Forth Flores é proibido."
+    }
+  ],
+  "rotinas": [
+    {
+      "nome": "Lixiviação",
+      "frequencia": "mensal",
+      "alvo": "todas as plantas"
+    },
+    {
+      "nome": "Acidificação da água de rega com vinagre branco",
+      "frequencia": "periódica",
+      "alvo": "tag acidofila"
+    },
+    {
+      "nome": "Retomada da adubação",
+      "frequencia": "anual",
+      "mes": 10,
+      "alvo": "todas, exceto sem_adubacao"
+    },
+    {
+      "nome": "Pausa da adubação",
+      "frequencia": "anual",
+      "meses": [
+        6,
+        7,
+        8,
+        9
+      ],
+      "alvo": "todas, exceto excecao_pausa"
+    }
+  ]
+}
