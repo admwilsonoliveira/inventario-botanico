@@ -96,3 +96,13 @@ describe("resumo da semana", () => {
       .toBe("Próximos 2 dias: máxima de 28 °C, ar até 52%, 2 mm de chuva. Sem alertas.");
   });
 });
+
+describe("tempo de hoje", () => {
+  it("agora, máxima/mínima e chuva", async () => {
+    const { climaDeHoje } = await import("./rotina");
+    const p = { datas: ["2026-10-03", "2026-10-04"], tmax: [30, 26.3], tmin: [15, 16.6], umidadeMin: [40, 59], chuva: [0, 0], probChuva: [0, 10], diasPassados: 1, agora: { temperatura: 22.4, umidade: 71 } };
+    expect(climaDeHoje(p, "2026-10-04")).toBe("Hoje: agora 22 °C e ar 71% · máx. 26 °C / mín. 17 °C · sem chuva.");
+    expect(climaDeHoje({ ...p, chuva: [0, 4.6], probChuva: [0, 80] }, "2026-10-04")).toMatch(/chuva 5 mm \(80%\)/);
+    expect(climaDeHoje({ ...p, probChuva: [0, 45] }, "2026-10-04")).toMatch(/chance de chuva 45%/);
+  });
+});

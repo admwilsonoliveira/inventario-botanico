@@ -362,7 +362,8 @@ export async function previsaoPatrocinio(): Promise<Previsao | null> {
   if (previsaoGuardada && Date.now() - previsaoGuardada.em < 3_600_000) return previsaoGuardada.valor;
   try {
     const url = "https://api.open-meteo.com/v1/forecast?latitude=-18.94&longitude=-46.99" +
-      "&daily=temperature_2m_max,relative_humidity_2m_min,precipitation_sum" +
+      "&current=temperature_2m,relative_humidity_2m" +
+      "&daily=temperature_2m_max,temperature_2m_min,relative_humidity_2m_min,precipitation_sum,precipitation_probability_max" +
       "&timezone=America%2FSao_Paulo&past_days=7&forecast_days=7";
     const r = await fetch(url);
     if (!r.ok) return null;
@@ -370,7 +371,9 @@ export async function previsaoPatrocinio(): Promise<Previsao | null> {
     const d = j.daily;
     const valor: Previsao = {
       datas: d.time, tmax: d.temperature_2m_max, umidadeMin: d.relative_humidity_2m_min,
-      chuva: (d.precipitation_sum as (number | null)[]).map((x) => x ?? 0), diasPassados: 7
+      chuva: (d.precipitation_sum as (number | null)[]).map((x) => x ?? 0), diasPassados: 7,
+      tmin: d.temperature_2m_min, probChuva: d.precipitation_probability_max,
+      agora: j.current ? { temperatura: j.current.temperature_2m, umidade: j.current.relative_humidity_2m } : null
     };
     previsaoGuardada = { em: Date.now(), valor };
     return valor;

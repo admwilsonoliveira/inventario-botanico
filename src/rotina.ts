@@ -118,6 +118,9 @@ export interface Previsao {
   chuva: number[];
   /** Quantos dos primeiros dias são passados (para ver se vinha de seca). */
   diasPassados: number;
+  tmin?: number[];
+  probChuva?: (number | null)[];
+  agora?: { temperatura: number; umidade: number } | null;
 }
 
 export interface AlertaClima {
@@ -157,6 +160,19 @@ export function alertasDeClima(p: Previsao, hoje: string): AlertaClima[] {
     });
   }
   return out;
+}
+
+/** O tempo de hoje: agora, máxima/mínima e chuva prevista. */
+export function climaDeHoje(p: Previsao, hoje: string): string | null {
+  const i = p.datas.indexOf(hoje);
+  if (i < 0) return null;
+  const partes: string[] = [];
+  if (p.agora) partes.push(`agora ${Math.round(p.agora.temperatura)} °C e ar ${Math.round(p.agora.umidade)}%`);
+  partes.push(`máx. ${Math.round(p.tmax[i])} °C${p.tmin ? ` / mín. ${Math.round(p.tmin[i])} °C` : ""}`);
+  const prob = p.probChuva?.[i];
+  const mm = Math.round(p.chuva[i]);
+  partes.push(mm > 0 ? `chuva ${mm} mm${prob != null ? ` (${prob}%)` : ""}` : prob != null && prob >= 30 ? `chance de chuva ${prob}%` : "sem chuva");
+  return `Hoje: ${partes.join(" · ")}.`;
 }
 
 /** Resumo dos próximos dias, mostrado quando não há alerta. */
