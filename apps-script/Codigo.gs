@@ -4,10 +4,16 @@
  * Fica "preso" à planilha Google do inventário (Extensões → Apps Script) e é publicado como App da Web.
  * O app do celular chama este script para:
  *   - sincronizar: grava as alterações do aparelho (uma aba por tabela) e devolve as que vieram de outros aparelhos;
- *   - foto: guarda a foto original no Drive, em /Inventario Botanico/Fotos/<id> - <nome>.
+ *   - foto: guarda a foto original no Drive, em /Inventario Botanico/Fotos/<id> - <nome>;
+ *   - identificar: manda as fotos ao Pl@ntNet e devolve as 3 espécies mais prováveis;
+ *   - analisar: pede ao Gemini a ficha da espécie e/ou o laudo de saúde, em JSON;
+ *   - uso_ia: quanto da cota grátis de cada IA já foi usado hoje.
  *
  * Segurança: toda chamada precisa do token gerado pela função configurar() (fica nas Propriedades do script).
- * As chaves de IA das próximas fases também ficarão aqui, nunca no app.
+ * As chaves de IA ficam só aqui, nas Propriedades do script (nunca no app):
+ *   PLANTNET_KEY, GEMINI_KEY — obrigatórias para a Fase 2;
+ *   GEMINI_MODELO (padrão gemini-3.8-flash), GEMINI_LIMITE_DIA (padrão 20), PLANTNET_LIMITE_DIA (padrão 500) — opcionais.
+ * Cada chamada de IA é anotada na aba "uso_ia"; ao chegar a 80% do limite do dia, novas chamadas são recusadas.
  */
 
 const EPOCA = "1970-01-01T00:00:00.000Z";
@@ -50,6 +56,9 @@ function doPost(e) {
     if (req.acao === "sincronizar") return responder_(sincronizar_(req));
     if (req.acao === "foto") return responder_(salvarFoto_(req));
     if (req.acao === "ping") return responder_({ ok: true });
+    if (req.acao === "identificar") return responder_(identificar_(req));
+    if (req.acao === "analisar") return responder_(analisar_(req));
+    if (req.acao === "uso_ia") return responder_({ ok: true, uso: usoHoje_() });
     return responder_({ erro: "Ação desconhecida: " + req.acao });
   } catch (err) {
     return responder_({ erro: String(err && err.message ? err.message : err) });
@@ -234,4 +243,230 @@ function pastaDaPlanta_(id, nome) {
 function subpasta_(mae, nome) {
   const it = mae.getFoldersByName(nome);
   return it.hasNext() ? it.next() : mae.createFolder(nome);
+}
+
+// ---------------------------------------------------------------------------
+// IA: Pl@ntNet (identificação) e Gemini (ficha e laudo)
+// ---------------------------------------------------------------------------
+
+const ABA_USO_IA = "uso_ia";
+const PLANTNET_URL = "https://my-api.plantnet.org/v2/identify/all";
+const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/interactions";
+
+function prop_(nome, padrao) {
+  const v = PropertiesService.getScriptProperties().getProperty(nome);
+  return v === null || v === "" ? padrao : v;
+}
+
+function limites_() {
+  return {
+    plantnet: Number(prop_("PLANTNET_LIMITE_DIA", "500")),
+    gemini: Number(prop_("GEMINI_LIMITE_DIA", "20"))
+  };
+}
+
+function hoje_() {
+  return Utilities.formatDate(new Date(), "America/Sao_Paulo", "yyyy-MM-dd");
+}
+
+/** Contagem de chamadas de hoje por tipo, com o limite e o teto de 80%. */
+function usoHoje_() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(ABA_USO_IA);
+  const contagem = { plantnet: 0, gemini: 0, tokens_gemini: 0 };
+  if (sheet && sheet.getLastRow() > 1) {
+    const hoje = hoje_();
+    sheet.getRange(2, 1, sheet.getLastRow() - 1, 5).getValues().forEach(function (l) {
+      const data = l[0] instanceof Date ? Utilities.formatDate(l[0], "America/Sao_Paulo", "yyyy-MM-dd") : String(l[0]);
+      if (data !== hoje) return;
+      if (l[2] === "plantnet") contagem.plantnet += Number(l[3]) || 0;
+      if (l[2] === "gemini") { contagem.gemini += Number(l[3]) || 0; contagem.tokens_gemini += Number(l[4]) || 0; }
+    });
+  }
+  const lim = limites_();
+  return {
+    plantnet: { usado: contagem.plantnet, limite: lim.plantnet, teto: Math.floor(lim.plantnet * 0.8) },
+    gemini: { usado: contagem.gemini, limite: lim.gemini, teto: Math.floor(lim.gemini * 0.8), tokens: contagem.tokens_gemini },
+    modelo: prop_("GEMINI_MODELO", "gemini-3.8-flash")
+  };
+}
+
+function anotarUso_(tipo, quantidade, tokens, detalhe) {
+  const planilha = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = planilha.getSheetByName(ABA_USO_IA);
+  if (!sheet) {
+    sheet = planilha.insertSheet(ABA_USO_IA);
+    sheet.appendRow(["data", "hora", "tipo", "quantidade", "tokens", "detalhe"]);
+    sheet.setFrozenRows(1);
+    sheet.getRange("A:B").setNumberFormat("@");
+  }
+  const agora = new Date();
+  sheet.appendRow([hoje_(), Utilities.formatDate(agora, "America/Sao_Paulo", "HH:mm:ss"), tipo, quantidade, tokens || "", detalhe || ""]);
+}
+
+function conferirCota_(tipo) {
+  const u = usoHoje_()[tipo];
+  if (u.usado >= u.teto) {
+    throw new Error("Cota grátis de hoje do " + (tipo === "plantnet" ? "Pl@ntNet" : "Gemini") +
+      " chegou a 80% (" + u.usado + " de " + u.limite + "). Tente amanhã.");
+  }
+}
+
+/** Monta um corpo multipart/form-data com vários campos de mesmo nome (o Pl@ntNet pede assim). */
+function multipart_(campos, fronteira) {
+  let bytes = [];
+  const texto = function (s) { bytes = bytes.concat(Utilities.newBlob(s).getBytes()); };
+  campos.forEach(function (c) {
+    texto("--" + fronteira + "\r\n");
+    if (c.blob) {
+      texto('Content-Disposition: form-data; name="' + c.nome + '"; filename="' + c.blob.getName() + '"\r\n' +
+        "Content-Type: " + c.blob.getContentType() + "\r\n\r\n");
+      bytes = bytes.concat(c.blob.getBytes());
+      texto("\r\n");
+    } else {
+      texto('Content-Disposition: form-data; name="' + c.nome + '"\r\n\r\n' + c.valor + "\r\n");
+    }
+  });
+  texto("--" + fronteira + "--\r\n");
+  return bytes;
+}
+
+/**
+ * req = { imagens: [{ base64, mime, orgao }] }  (orgao: habit, leaf, flower, fruit, auto)
+ * → { ok, candidatos: [{ score, nome_cientifico, nome_cientifico_autor, genero, familia, nomes_populares[] }], restantes }
+ */
+function identificar_(req) {
+  const chave = prop_("PLANTNET_KEY", "");
+  if (!chave) throw new Error("Falta a chave do Pl@ntNet (PLANTNET_KEY) nas Propriedades do script.");
+  const imagens = (req.imagens || []).slice(0, 5);
+  if (!imagens.length) throw new Error("Nenhuma foto enviada.");
+  conferirCota_("plantnet");
+
+  const campos = [];
+  imagens.forEach(function (img, i) {
+    campos.push({ nome: "images", blob: Utilities.newBlob(Utilities.base64Decode(img.base64), img.mime || "image/jpeg", "foto" + (i + 1) + ".jpg") });
+  });
+  imagens.forEach(function (img) { campos.push({ nome: "organs", valor: img.orgao || "auto" }); });
+  const fronteira = "----inventario" + Utilities.getUuid().replace(/-/g, "");
+  const url = PLANTNET_URL + "?api-key=" + encodeURIComponent(chave) + "&lang=pt-br&nb-results=3&include-related-images=false";
+  const resp = UrlFetchApp.fetch(url, {
+    method: "post",
+    contentType: "multipart/form-data; boundary=" + fronteira,
+    payload: multipart_(campos, fronteira),
+    muteHttpExceptions: true
+  });
+  const codigo = resp.getResponseCode();
+  anotarUso_("plantnet", 1, "", "HTTP " + codigo);
+  if (codigo === 404) return { ok: true, candidatos: [], restantes: null };
+  if (codigo === 429) throw new Error("O Pl@ntNet recusou: limite de uso atingido. Tente amanhã.");
+  if (codigo === 401) throw new Error("O Pl@ntNet recusou a chave (PLANTNET_KEY). Confira nas Propriedades do script.");
+  if (codigo !== 200) throw new Error("Erro do Pl@ntNet (" + codigo + "): " + resp.getContentText().slice(0, 200));
+
+  const json = JSON.parse(resp.getContentText());
+  const candidatos = (json.results || []).slice(0, 3).map(function (r) {
+    const sp = r.species || {};
+    return {
+      score: r.score,
+      nome_cientifico: sp.scientificNameWithoutAuthor || "",
+      nome_cientifico_autor: sp.scientificName || "",
+      genero: sp.genus ? sp.genus.scientificNameWithoutAuthor : "",
+      familia: sp.family ? sp.family.scientificNameWithoutAuthor : "",
+      nomes_populares: sp.commonNames || []
+    };
+  });
+  return { ok: true, candidatos: candidatos, restantes: json.remainingIdentificationRequests };
+}
+
+/**
+ * req = { instrucoes: "texto", imagens: [{ base64, mime }], esquema: {JSON Schema} }
+ * → { ok, resultado: {objeto JSON}, tokens }
+ */
+function analisar_(req) {
+  const chave = prop_("GEMINI_KEY", "");
+  if (!chave) throw new Error("Falta a chave do Gemini (GEMINI_KEY) nas Propriedades do script.");
+  conferirCota_("gemini");
+  const modelo = prop_("GEMINI_MODELO", "gemini-3.8-flash");
+
+  const entrada = [{ type: "text", text: req.instrucoes }].concat((req.imagens || []).slice(0, 6).map(function (img) {
+    return { type: "image", data: img.base64, mime_type: img.mime || "image/jpeg" };
+  }));
+  const corpo = { model: modelo, input: entrada, store: false };
+  if (req.esquema) corpo.response_format = { type: "text", mime_type: "application/json", schema: req.esquema };
+
+  let resp = chamarGemini_(GEMINI_URL, corpo, chave);
+  // se o formato com esquema for recusado, tenta de novo pedindo só JSON no texto
+  if (resp.getResponseCode() === 400 && corpo.response_format) {
+    delete corpo.response_format;
+    resp = chamarGemini_(GEMINI_URL, corpo, chave);
+  }
+  const codigo = resp.getResponseCode();
+  if (codigo !== 200) {
+    anotarUso_("gemini", 1, "", "HTTP " + codigo);
+    if (codigo === 429) throw new Error("O Gemini recusou: limite da cota grátis atingido. Tente mais tarde.");
+    if (codigo === 400 || codigo === 403) throw new Error("O Gemini recusou o pedido (" + codigo + "). Confira a chave GEMINI_KEY e o modelo " + modelo + ". " + resp.getContentText().slice(0, 200));
+    throw new Error("Erro do Gemini (" + codigo + "): " + resp.getContentText().slice(0, 200));
+  }
+  const json = JSON.parse(resp.getContentText());
+  const tokens = (json.usage && json.usage.total_tokens) || (json.usageMetadata && json.usageMetadata.totalTokenCount) || "";
+  anotarUso_("gemini", 1, tokens, modelo);
+  const texto = textoDaResposta_(json);
+  if (!texto) throw new Error("O Gemini não devolveu texto.");
+  return { ok: true, resultado: lerJson_(texto), tokens: tokens };
+}
+
+function chamarGemini_(url, corpo, chave) {
+  return UrlFetchApp.fetch(url, {
+    method: "post",
+    contentType: "application/json",
+    headers: { "x-goog-api-key": chave },
+    payload: JSON.stringify(corpo),
+    muteHttpExceptions: true
+  });
+}
+
+/** Junta o texto da resposta, aceitando os formatos conhecidos da API. */
+function textoDaResposta_(json) {
+  if (typeof json.output_text === "string") return json.output_text;
+  const partes = [];
+  (json.steps || []).forEach(function (s) {
+    (s.content || []).forEach(function (c) { if (c.type === "text" && c.text) partes.push(c.text); });
+  });
+  (json.outputs || []).forEach(function (o) { if (o.text) partes.push(o.text); });
+  if (!partes.length && json.candidates && json.candidates[0] && json.candidates[0].content) {
+    (json.candidates[0].content.parts || []).forEach(function (p) { if (p.text) partes.push(p.text); });
+  }
+  return partes.join("");
+}
+
+function lerJson_(texto) {
+  const cerca = String.fromCharCode(96, 96, 96); // três crases
+  let limpo = texto.trim();
+  if (limpo.indexOf(cerca) === 0) limpo = limpo.replace(/^\S*\s*/, "");
+  if (limpo.lastIndexOf(cerca) === limpo.length - 3) limpo = limpo.slice(0, -3);
+  limpo = limpo.trim();
+  try {
+    return JSON.parse(limpo);
+  } catch (e) {
+    const ini = limpo.indexOf("{"), fim = limpo.lastIndexOf("}");
+    if (ini >= 0 && fim > ini) return JSON.parse(limpo.slice(ini, fim + 1));
+    throw new Error("A resposta do Gemini não veio em JSON.");
+  }
+}
+
+/** Rode pelo editor depois de colocar as chaves: confere as duas e pede a autorização de acesso à internet. */
+function testarChaves() {
+  const pn = prop_("PLANTNET_KEY", "");
+  if (!pn) Logger.log("❌ Falta PLANTNET_KEY");
+  else {
+    const r = UrlFetchApp.fetch("https://my-api.plantnet.org/v2/quota/daily?api-key=" + encodeURIComponent(pn), { muteHttpExceptions: true });
+    Logger.log(r.getResponseCode() === 200 ? "✅ Pl@ntNet ok: " + r.getContentText().slice(0, 200) : "❌ Pl@ntNet recusou (" + r.getResponseCode() + ")");
+  }
+  const gm = prop_("GEMINI_KEY", "");
+  if (!gm) Logger.log("❌ Falta GEMINI_KEY");
+  else {
+    const modelo = prop_("GEMINI_MODELO", "gemini-3.8-flash");
+    const r = chamarGemini_(GEMINI_URL, { model: modelo, input: "Responda só: ok", store: false }, gm);
+    Logger.log(r.getResponseCode() === 200
+      ? "✅ Gemini ok (" + modelo + "): " + textoDaResposta_(JSON.parse(r.getContentText())).slice(0, 50)
+      : "❌ Gemini recusou (" + r.getResponseCode() + "): " + r.getContentText().slice(0, 300));
+  }
 }
