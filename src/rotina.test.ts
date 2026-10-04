@@ -88,3 +88,11 @@ describe("baixa de estoque", () => {
     expect(calcularBaixa({ ...ouroVerde, quantidade: 1, unidade: "kg" }, { dose_g_l: 1, volume_ml: 1000 })).toEqual({ quantidade: 0.999, gasto: 0.001 });
   });
 });
+
+describe("resumo da semana", () => {
+  it("mostra máxima, ar e chuva dos próximos dias", async () => {
+    const { resumoDaSemana } = await import("./rotina");
+    expect(resumoDaSemana({ datas: ["2026-10-03", "2026-10-04", "2026-10-05"], tmax: [40, 26.3, 28.1], umidadeMin: [10, 59, 52], chuva: [50, 0, 1.6], diasPassados: 1 }, "2026-10-04"))
+      .toBe("Próximos 2 dias: máxima de 28 °C, ar até 52%, 2 mm de chuva. Sem alertas.");
+  });
+});

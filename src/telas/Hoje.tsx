@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db, lerConfig } from "../db";
-import { alertasDeClima, type AlertaClima, checkupsDoDia, lembretesDeRotina } from "../rotina";
+import { alertasDeClima, type AlertaClima, checkupsDoDia, lembretesDeRotina, resumoDaSemana } from "../rotina";
 import { previsaoPatrocinio } from "../ia";
 import { formatarData } from "../formato";
 import {
@@ -22,8 +22,12 @@ function Rotina() {
   const eventos = useLiveQuery(() => db.eventos.toArray(), []);
   const intervalo = useLiveQuery(() => lerConfig<number>(db, "intervalo_acidificacao", INTERVALO_ACIDIFICACAO_PADRAO), [], INTERVALO_ACIDIFICACAO_PADRAO);
   const [clima, setClima] = useState<AlertaClima[] | null>(null);
+  const [resumo, setResumo] = useState<string | null>(null);
   useEffect(() => {
-    previsaoPatrocinio().then((p) => setClima(p ? alertasDeClima(p, hojeISO()) : null));
+    previsaoPatrocinio().then((p) => {
+      setClima(p ? alertasDeClima(p, hojeISO()) : null);
+      setResumo(p ? resumoDaSemana(p, hojeISO()) : null);
+    });
   }, []);
   if (!plantas || !eventos) return null;
   const hoje = hojeISO();
@@ -35,6 +39,7 @@ function Rotina() {
 
   return (
     <>
+      {clima && clima.length === 0 && resumo && <div className="alerta-clima neutro">⛅ {resumo}</div>}
       {clima?.map((a) => (
         <div key={a.tipo} className={`alerta-clima ${a.tipo}`}>
           {a.tipo === "calor" ? "🌡️" : a.tipo === "ar_seco" ? "💨" : "🌧️"} {a.texto}

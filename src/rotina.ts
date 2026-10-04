@@ -159,6 +159,16 @@ export function alertasDeClima(p: Previsao, hoje: string): AlertaClima[] {
   return out;
 }
 
+/** Resumo dos próximos dias, mostrado quando não há alerta. */
+export function resumoDaSemana(p: Previsao, hoje: string): string | null {
+  const idx = p.datas.map((d, i) => ({ d, i })).filter(({ d }) => d >= hoje).map(({ i }) => i);
+  if (!idx.length) return null;
+  const max = Math.round(Math.max(...idx.map((i) => p.tmax[i])));
+  const ar = Math.round(Math.min(...idx.map((i) => p.umidadeMin[i])));
+  const chuva = Math.round(idx.reduce((s, i) => s + p.chuva[i], 0));
+  return `Próximos ${idx.length} dias: máxima de ${max} °C, ar até ${ar}%, ${chuva > 0 ? `${chuva} mm de chuva` : "sem chuva"}. Sem alertas.`;
+}
+
 // ---------- Baixa automática de estoque ----------
 
 /**
