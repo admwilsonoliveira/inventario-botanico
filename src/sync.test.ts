@@ -162,5 +162,7 @@ describe("ajustes dos dados vindos da planilha", () => {
     expect(mesclarMeta("proxima_ficha", 50, 55)).toBeNull();
     expect(mesclarMeta("fichas_excluidas", [3], [5])).toEqual([3, 5]);
     expect(mesclarMeta("fichas_excluidas", [5], [5])).toBeNull();
+    expect(mesclarMeta("ultimo_id_planta", "P70", "P65")).toBe("P70");
+    expect(mesclarMeta("ultimo_id_planta", "P63", "P65")).toBeNull();
   });
 });

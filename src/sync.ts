@@ -52,6 +52,9 @@ export function mesclarMeta(chave: string, local: unknown, remoto: unknown): unk
   if (chave === "proxima_ficha" && typeof local === "number" && typeof remoto === "number") {
     return local > remoto ? local : null;
   }
+  if (chave === "ultimo_id_planta" && typeof local === "string" && typeof remoto === "string") {
+    return Number(local.slice(1)) > Number(remoto.slice(1)) ? local : null;
+  }
   if (chave === "fichas_excluidas" && Array.isArray(local) && Array.isArray(remoto)) {
     const uniao = [...new Set([...remoto, ...local])].sort((a, b) => a - b);
     return uniao.length > remoto.length ? uniao : null;

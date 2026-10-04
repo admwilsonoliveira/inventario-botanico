@@ -180,6 +180,38 @@ export async function numerarPendentes(banco: BancoInventario): Promise<number> 
   });
 }
 
+/** Próximo código de planta (P63, P64…), contando também os já excluídos/removidos. */
+export function proximoIdPlanta(ids: string[]): string {
+  const maior = ids.reduce((m, id) => {
+    const n = /^P(\d+)$/.exec(id);
+    return n ? Math.max(m, Number(n[1])) : m;
+  }, 0);
+  return `P${String(maior + 1).padStart(2, "0")}`;
+}
+
+/** Cria uma planta nova com a próxima ficha. Campos não informados ficam vazios (não inventa dados). */
+export async function criarPlanta(banco: BancoInventario, dados: Partial<Planta>): Promise<string> {
+  return banco.transaction("rw", banco.plantas, banco.meta, async () => {
+    const ultimo = await lerMeta<string | null>(banco, "ultimo_id_planta", null);
+    const usados = [...((await banco.plantas.toCollection().primaryKeys()) as string[]), ...(ultimo ? [ultimo] : [])];
+    const id = proximoIdPlanta(usados);
+    await gravarMeta(banco, "ultimo_id_planta", id);
+    const ficha = await reservarProximaFicha(banco);
+    const planta: Planta = {
+      id, ficha, nome_popular: "", nome_cientifico: null, grupo: null, quantidade: 1, status: "ativa",
+      data_entrada: new Date().toLocaleDateString("sv-SE", { timeZone: "America/Sao_Paulo" }),
+      origem: null, zona: null, ph_min: null, ph_max: null, rega_gatilho_min: null, rega_gatilho_max: null,
+      luz: null, vaso: null, substrato: null, adubacao: null, objetivo: null, tags: [], proibicoes: [],
+      historico: "", params_origem: "inventario", alertas: [],
+      ...dados,
+      qr_code: linkPlanta(id),
+      excluida_em: null
+    };
+    await banco.plantas.add(planta);
+    return id;
+  });
+}
+
 /** Reserva o próximo número de ficha para uma planta nova. */
 export async function reservarProximaFicha(banco: BancoInventario): Promise<number> {
   return banco.transaction("rw", banco.meta, async () => {
@@ -214,6 +246,10 @@ export async function excluirDefinitivamente(banco: BancoInventario, plantaId: s
         const excluidas = await lerMeta<number[]>(banco, "fichas_excluidas", []);
         await gravarMeta(banco, "fichas_excluidas", [...excluidas, planta.ficha]);
       }
+      // o código também nunca volta a ser usado
+      const ultimo = await lerMeta<string | null>(banco, "ultimo_id_planta", null);
+      const maior = proximoIdPlanta([plantaId, ...(ultimo ? [ultimo] : [])]);
+      await gravarMeta(banco, "ultimo_id_planta", `P${String(Number(maior.slice(1)) - 1).padStart(2, "0")}`);
       for (const tabela of ["eventos", "medicoes", "fotos", "pendencias"] as const) {
         const ids = (await banco[tabela].where("planta_id").equals(plantaId).primaryKeys()) as string[];
         for (const id of ids) await anotarExclusao(banco, tabela, id);

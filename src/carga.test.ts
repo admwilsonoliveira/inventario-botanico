@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import seedJson from "../seed/inventario_inicial.json";
 import { BancoInventario, lerMeta } from "./db";
 import {
-  carregarSeVazio, confirmarRevisao, definirFicha, excluirDefinitivamente, numerarPendentes, planejarNumeracao,
+  carregarSeVazio, confirmarRevisao, criarPlanta, definirFicha, proximoIdPlanta, excluirDefinitivamente, numerarPendentes, planejarNumeracao,
   precisaRevisao, prepararCarga, removerPlanta, reservarProximaFicha, restaurarCarga, type SeedJson, validarFicha
 } from "./carga";
 
@@ -109,6 +109,27 @@ describe("numeração das fichas", () => {
     await excluirDefinitivamente(banco, "P31");
     expect(await validarFicha(banco, "P01", 47)).toMatch(/excluída/);
     await expect(definirFicha(banco, "P01", 47)).rejects.toThrow();
+  });
+});
+
+describe("planta nova", () => {
+  beforeEach(() => carregarSeVazio(banco, seed));
+
+  it("recebe o próximo código e a próxima ficha", async () => {
+    expect(proximoIdPlanta(["P01", "P62", "X9"])).toBe("P63");
+    const id = await criarPlanta(banco, { nome_popular: "Alocasia Polly", grupo: 2, params_origem: "sugerido" });
+    const p = (await banco.plantas.get(id))!;
+    expect(id).toBe("P63");
+    expect(p.ficha).toBe(53);
+    expect(p.qr_code).toBe("#/planta/P63");
+    expect(p.params_origem).toBe("sugerido");
+    expect(p.ph_min).toBeNull();
+    expect(await lerMeta(banco, "proxima_ficha", 0)).toBe(54);
+  });
+
+  it("não reaproveita o código de planta excluída", async () => {
+    await excluirDefinitivamente(banco, "P62");
+    expect(await criarPlanta(banco, { nome_popular: "X" })).toBe("P63");
   });
 });
 
