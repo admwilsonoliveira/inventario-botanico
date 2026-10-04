@@ -186,11 +186,10 @@ function escreverAba_(aba) {
   }));
   const sheet = aba.sheet;
   sheet.clearContents();
-  // coluna com algum texto → formato texto inteiro
+  // coluna com algum texto → formato texto (senão o Sheets transforma "2026-10" em data)
   colunas.forEach(function (c, j) {
     const temTexto = matriz.some(function (linha, i) { return i > 0 && typeof linha[j] === "string" && linha[j] !== ""; });
-    const faixa = sheet.getRange(1, j + 1, Math.max(matriz.length, 2), 1);
-    faixa.setNumberFormat(temTexto ? "@" : "General");
+    if (temTexto) sheet.getRange(1, j + 1, Math.max(matriz.length, 2), 1).setNumberFormat("@");
   });
   sheet.getRange(1, 1, matriz.length, colunas.length).setValues(matriz);
   sheet.setFrozenRows(1);

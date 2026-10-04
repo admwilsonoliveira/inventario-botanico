@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
+import pacote from "./package.json" with { type: "json" };
 
 export default defineConfig({
   // "./" faz o app funcionar em qualquer subpasta (ex.: admwilsonoliveira.github.io/inventario-botanico/)
@@ -8,7 +9,7 @@ export default defineConfig({
   server: { port: 5174 },
   define: {
     __APP_VERSION__: JSON.stringify(
-      process.env.npm_package_version +
+      pacote.version +
         " · " +
         new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo", dateStyle: "short", timeStyle: "short" })
     )

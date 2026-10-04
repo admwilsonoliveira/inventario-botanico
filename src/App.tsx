@@ -5,12 +5,19 @@ import { db } from "./db";
 import { aplicarMigracoes } from "./migracoes";
 import { seed } from "./seed";
 import { ir, useRota } from "./rotas";
+import { iniciarSyncAutomatico } from "./sync";
+import { agruparPendencias, hojeISO } from "./registro";
+import { Aviso } from "./aviso";
 import { Lista } from "./telas/Lista";
 import { Ficha } from "./telas/Ficha";
 import { Editar } from "./telas/Editar";
 import { Revisao } from "./telas/Revisao";
 import { Etiquetas } from "./telas/Etiquetas";
 import { Config } from "./telas/Config";
+import { Registrar, type TipoRegistro } from "./telas/Registrar";
+import { Historico, Hoje, NovaPendencia } from "./telas/Hoje";
+
+const TIPOS_REGISTRO: TipoRegistro[] = ["rega", "adubacao", "medicao", "foto", "outro"];
 
 export function App() {
   const [pronto, setPronto] = useState(false);
@@ -24,32 +31,48 @@ export function App() {
         // Primeira abertura: vai direto para a revisão, a menos que tenha vindo pelo QR de uma planta
         if (importou && !location.hash.startsWith("#/planta/")) ir("/revisao");
         setPronto(true);
+        iniciarSyncAutomatico(db);
       })
       .catch((e) => setErro(String(e)));
   }, []);
 
   const qtdRevisao = useLiveQuery(() => db.plantas.filter(precisaRevisao).count(), [], 0);
+  const qtdHoje = useLiveQuery(async () => {
+    const removidas = new Set((await db.plantas.where("status").equals("removida").primaryKeys()) as string[]);
+    const g = agruparPendencias((await db.pendencias.toArray()).filter((p) => !p.planta_id || !removidas.has(p.planta_id)), hojeISO());
+    return g.atrasadas.length + g.hoje.length;
+  }, [], 0);
 
   if (erro) return <div className="tela"><div className="aviso erro">Erro ao abrir o banco local: {erro}</div></div>;
   if (!pronto) return <div className="tela carregando">Carregando…</div>;
 
-  const [secao, id, acao] = rota;
+  const [secao, id, acao, tipo] = rota;
   let tela;
   if (secao === "planta" && id && acao === "editar") tela = <Editar id={id} />;
-  else if (secao === "planta" && id) tela = <Ficha id={id} />;
+  else if (secao === "planta" && id && acao === "registrar" && TIPOS_REGISTRO.includes(tipo as TipoRegistro)) {
+    tela = <Registrar key={`${id}-${tipo}`} plantaId={id} tipo={tipo as TipoRegistro} />;
+  } else if (secao === "planta" && id) tela = <Ficha id={id} />;
+  else if (secao === "registrar") tela = <Registrar plantaId={null} tipo="outro" />;
+  else if (secao === "pendencia" && id === "nova") tela = <NovaPendencia plantaId={acao ?? null} />;
+  else if (secao === "hoje") tela = <Hoje />;
+  else if (secao === "historico") tela = <Historico />;
   else if (secao === "revisao") tela = <Revisao />;
   else if (secao === "etiquetas") tela = <Etiquetas />;
   else if (secao === "config") tela = <Config />;
   else tela = <Lista />;
 
-  const atual = !secao || secao === "planta" ? "" : secao;
+  const atual = !secao || secao === "planta" ? "" : ["registrar", "pendencia", "historico"].includes(secao) ? "hoje" : secao;
   const ativa = (s: string) => (atual === s ? "ativa" : "");
 
   return (
     <>
       <main className="tela">{tela}</main>
+      <Aviso />
       <nav className="barra-nav sem-impressao">
         <a href="#/" className={ativa("")}><span>🌿</span>Plantas</a>
+        <a href="#/hoje" className={ativa("hoje")}>
+          <span>📅{qtdHoje > 0 && <b className="bolinha">{qtdHoje}</b>}</span>Hoje
+        </a>
         <a href="#/revisao" className={ativa("revisao")}>
           <span>📝{qtdRevisao > 0 && <b className="bolinha">{qtdRevisao}</b>}</span>Revisão
         </a>

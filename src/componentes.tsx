@@ -3,8 +3,35 @@ import QRCode from "qrcode";
 import { useLiveQuery } from "dexie-react-hooks";
 import { definirFicha } from "./carga";
 import { db, lerMeta } from "./db";
+import { type EstadoSync, estadoSync, lerConfigNuvem, ouvirSync, sincronizarAgora } from "./sync";
 import type { Grupo, Planta } from "./types";
 import { STATUS_ROTULO } from "./types";
+
+/** Situação da sincronização com a planilha Google. */
+export function StatusNuvem() {
+  const [estado, setEstado] = useState<EstadoSync>(estadoSync());
+  const cfg = useLiveQuery(() => lerConfigNuvem(db), [], undefined);
+  useEffect(() => {
+    const desligar = ouvirSync(setEstado);
+    return () => { desligar(); };
+  }, []);
+  if (cfg === undefined) return null;
+  if (cfg === null) {
+    return <a className="status-nuvem desligada" href="#/config">☁ Nuvem desligada: os dados ficam só neste aparelho. Configurar ›</a>;
+  }
+  if (estado.em_andamento) return <div className="status-nuvem">☁ Sincronizando…</div>;
+  if (estado.erro) {
+    return (
+      <button className="status-nuvem erro" onClick={() => sincronizarAgora(db)}>
+        ☁ Não sincronizou: {estado.erro} <u>Tentar de novo</u>
+      </button>
+    );
+  }
+  const hora = estado.ultimo_ok
+    ? new Date(estado.ultimo_ok).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })
+    : "ainda não";
+  return <button className="status-nuvem ok" onClick={() => sincronizarAgora(db)}>☁ Sincronizado: {hora}</button>;
+}
 
 /** Lista dos grupos com nome (guardada no banco, vem da carga inicial). */
 export function useGrupos(): Grupo[] {
