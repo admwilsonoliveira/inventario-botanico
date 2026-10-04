@@ -1,9 +1,22 @@
 import { useEffect, useState } from "react";
 import QRCode from "qrcode";
+import { useLiveQuery } from "dexie-react-hooks";
 import { definirFicha } from "./carga";
-import { db } from "./db";
-import type { Planta } from "./types";
+import { db, lerMeta } from "./db";
+import type { Grupo, Planta } from "./types";
 import { STATUS_ROTULO } from "./types";
+
+/** Lista dos grupos com nome (guardada no banco, vem da carga inicial). */
+export function useGrupos(): Grupo[] {
+  return useLiveQuery(() => lerMeta<Grupo[]>(db, "grupos", []), [], []);
+}
+
+/** "2 · Tropicais de folhagem"; se o grupo não tiver nome, só o número. */
+export function nomeGrupo(numero: number | null, grupos: Grupo[]): string {
+  if (numero === null) return "—";
+  const g = grupos.find((x) => x.numero === numero);
+  return g ? `${numero} · ${g.nome}` : `Grupo ${numero}`;
+}
 
 /** QR em SVG (nítido na impressão). */
 export function QR({ texto, className }: { texto: string; className?: string }) {

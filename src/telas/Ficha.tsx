@@ -6,7 +6,7 @@ import {
 } from "../carga";
 import { formatarData, formatarFaixa, rotuloTag } from "../formato";
 import { ir, urlCompleta } from "../rotas";
-import { CampoFicha, NumeroFicha, QR, Selos } from "../componentes";
+import { CampoFicha, NumeroFicha, QR, Selos, nomeGrupo, useGrupos } from "../componentes";
 
 function Linha({ rotulo, valor }: { rotulo: string; valor: React.ReactNode }) {
   return (
@@ -29,6 +29,7 @@ export function Ficha({ id }: { id: string }) {
   );
   const projetos = useLiveQuery(() => db.projetos.filter((pr) => pr.plantas.includes(id)).toArray(), [id], []);
   const [confirmandoExclusao, setConfirmandoExclusao] = useState(false);
+  const grupos = useGrupos();
 
   if (planta === null) return null;
   if (planta === undefined) {
@@ -91,7 +92,7 @@ export function Ficha({ id }: { id: string }) {
       <section className="cartao">
         <h2>Dados</h2>
         <dl>
-          <Linha rotulo="Grupo" valor={planta.grupo} />
+          <Linha rotulo="Grupo" valor={nomeGrupo(planta.grupo, grupos)} />
           <Linha rotulo="Quantidade" valor={planta.quantidade} />
           <Linha rotulo="Entrada" valor={planta.data_entrada && formatarData(planta.data_entrada)} />
           <Linha rotulo="Origem" valor={planta.origem} />

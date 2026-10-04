@@ -2,9 +2,7 @@ import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "../db";
 import { compararFichas } from "../formato";
-import { NumeroFicha, Selos } from "../componentes";
-
-const GRUPOS = [1, 2, 3, 4, 5];
+import { NumeroFicha, Selos, nomeGrupo, useGrupos } from "../componentes";
 
 const semAcento = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 
@@ -13,6 +11,7 @@ export function Lista() {
   const [grupo, setGrupo] = useState<number | null>(null);
   const [verRemovidas, setVerRemovidas] = useState(false);
   const plantas = useLiveQuery(() => db.plantas.toArray(), []);
+  const grupos = useGrupos();
 
   if (!plantas) return null;
 
@@ -37,8 +36,10 @@ export function Lista() {
       />
       <div className="chips" role="group" aria-label="Filtrar por grupo">
         <button className={grupo === null ? "chip ativo" : "chip"} onClick={() => setGrupo(null)}>Todos</button>
-        {GRUPOS.map((g) => (
-          <button key={g} className={grupo === g ? "chip ativo" : "chip"} onClick={() => setGrupo(g)}>Grupo {g}</button>
+        {grupos.map((g) => (
+          <button key={g.numero} className={grupo === g.numero ? "chip ativo" : "chip"} onClick={() => setGrupo(g.numero)}>
+            {nomeGrupo(g.numero, grupos)}
+          </button>
         ))}
       </div>
       <p className="contagem">

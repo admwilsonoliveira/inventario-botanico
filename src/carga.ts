@@ -1,7 +1,8 @@
 // Carga inicial (CLAUDE.md, seção 6) e numeração das fichas (seção 5).
 import { type BancoInventario, gravarMeta, lerMeta } from "./db";
+import { MIGRACOES } from "./migracoes";
 import type {
-  Desejo, Evento, Insumo, Pendencia, Planta, Projeto, Regra, Rotina, Zona
+  Desejo, Evento, Grupo, Insumo, Pendencia, Planta, Projeto, Regra, Rotina, Zona
 } from "./types";
 
 export interface SeedJson {
@@ -11,6 +12,7 @@ export interface SeedJson {
   escalas: unknown;
   proxima_ficha: number;
   observacao_numeracao?: string;
+  grupos: Grupo[];
   plantas: Omit<Planta, "qr_code" | "excluida_em">[];
   lista_desejos: Desejo[];
   eventos: Omit<Evento, "id">[];
@@ -64,6 +66,9 @@ export function prepararCarga(seed: SeedJson): Carga {
     meta: {
       proxima_ficha: seed.proxima_ficha,
       fichas_excluidas: [] as number[],
+      grupos: seed.grupos,
+      // a carga já vem com as correções das migrações (ver migracoes.ts)
+      migracoes_aplicadas: MIGRACOES.map((m) => m.id),
       local: seed.local,
       escalas: seed.escalas,
       ferramentas: seed.ferramentas,

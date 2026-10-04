@@ -3,6 +3,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "../db";
 import { validarFicha, definirFicha } from "../carga";
 import { ir } from "../rotas";
+import { nomeGrupo, useGrupos } from "../componentes";
 import { STATUS_ROTULO, type Planta, type StatusPlanta } from "../types";
 
 // Texto digitado → número (aceita vírgula). Vazio = sem valor.
@@ -56,6 +57,7 @@ function montarFormulario(p: Planta): Formulario {
 export function Editar({ id }: { id: string }) {
   const planta = useLiveQuery(() => db.plantas.get(id), [id], null);
   const zonas = useLiveQuery(() => db.zonas.toArray(), [], []);
+  const grupos = useGrupos();
   const [f, setF] = useState<Formulario | null>(null);
   const [erros, setErros] = useState<string[]>([]);
 
@@ -128,7 +130,10 @@ export function Editar({ id }: { id: string }) {
         <label>Grupo
           <select value={form.grupo} onChange={mudar("grupo")}>
             <option value="">—</option>
-            {[1, 2, 3, 4, 5].map((g) => <option key={g} value={g}>Grupo {g}</option>)}
+            {grupos.map((g) => <option key={g.numero} value={g.numero}>{nomeGrupo(g.numero, grupos)}</option>)}
+            {planta.grupo !== null && !grupos.some((g) => g.numero === planta.grupo) && (
+              <option value={planta.grupo}>Grupo {planta.grupo}</option>
+            )}
           </select>
         </label>
         <label>Situação

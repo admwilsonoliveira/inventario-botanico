@@ -130,6 +130,11 @@ export interface Rotina {
   meses?: number[];
 }
 
+export interface Grupo {
+  numero: number;
+  nome: string;
+}
+
 /** Valores avulsos (próxima ficha, local, escalas...). */
 export interface Meta {
   chave: string;

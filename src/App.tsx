@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { carregarSeVazio, precisaRevisao } from "./carga";
 import { db } from "./db";
+import { aplicarMigracoes } from "./migracoes";
 import { seed } from "./seed";
 import { ir, useRota } from "./rotas";
 import { Lista } from "./telas/Lista";
@@ -18,7 +19,8 @@ export function App() {
 
   useEffect(() => {
     carregarSeVazio(db, seed)
-      .then((importou) => {
+      .then(async (importou) => {
+        await aplicarMigracoes(db);
         // Primeira abertura: vai direto para a revisão, a menos que tenha vindo pelo QR de uma planta
         if (importou && !location.hash.startsWith("#/planta/")) ir("/revisao");
         setPronto(true);
