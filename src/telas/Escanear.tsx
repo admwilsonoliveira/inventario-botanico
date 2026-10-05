@@ -78,13 +78,28 @@ export function Escanear({ plantaId }: { plantaId: string | null }) {
   const [salvando, setSalvando] = useState(false);
   const [repetir, setRepetir] = useState<(() => void) | null>(null);
   const geracao = useRef(0);
+  /** Qual análise do Gemini falhou: oferece seguir sem a IA, para não perder as fotos. */
+  const [falhaIA, setFalhaIA] = useState<"ficha" | "checkup" | null>(null);
 
-  /** Mensagem de erro com o botão de tentar de novo a última análise. */
+  /** Mensagem de erro com o botão de tentar de novo a última análise e o plano B sem a IA. */
   const caixaErro = erro && (
     <div className="aviso erro">
       {erro}
       {repetir && (
         <button className="botao largo" onClick={() => repetir()}>↻ Tentar de novo</button>
+      )}
+      {falhaIA === "ficha" && (
+        <div className="plano-b">
+          <p>Ou siga sem a ficha da IA (dá para pedir o check-up depois, pela ficha da planta):</p>
+          <button className="botao secundario largo" disabled={salvando} onClick={() => incluirSemIA()}>➕ Incluir só com a identificação</button>
+          <button className="botao secundario largo" disabled={salvando} onClick={() => desejoSemIA()}>⭐ Lista de desejos</button>
+        </div>
+      )}
+      {falhaIA === "checkup" && alvo && (
+        <div className="plano-b">
+          <p>Ou guarde as fotos agora e peça o laudo mais tarde:</p>
+          <button className="botao secundario largo" disabled={salvando} onClick={() => guardarSemLaudo()}>💾 Guardar as fotos sem laudo</button>
+        </div>
       )}
     </div>
   );
@@ -171,6 +186,7 @@ export function Escanear({ plantaId }: { plantaId: string | null }) {
 
   async function analisar(modo: "ficha" | "checkup", candidato: Candidato | null, planta: Planta | null) {
     setErro(null);
+    setFalhaIA(null);
     setRepetir(() => () => analisar(modo, candidato, planta));
     setAlvo(planta);
     setEtapa("analisando");
@@ -193,6 +209,7 @@ export function Escanear({ plantaId }: { plantaId: string | null }) {
     } catch (e) {
       if (minha !== geracao.current) return;
       setErro((e as Error).message);
+      setFalhaIA(modo);
       setEtapa(modo === "checkup" && plantaId ? "fotos" : "candidatos");
     }
   }
@@ -232,6 +249,51 @@ export function Escanear({ plantaId }: { plantaId: string | null }) {
     });
     avisar("✔ Adicionada à lista de desejos");
     ir("/desejos");
+  }
+
+  // ---------- plano B: Gemini indisponível ----------
+
+  async function incluirSemIA() {
+    const c = escolhido !== null ? candidatos[escolhido] : null;
+    if (!c) return;
+    setSalvando(true);
+    const id = await criarPlanta(db, {
+      nome_popular: c.nomes_populares[0] || c.nome_cientifico,
+      nome_cientifico: c.nome_cientifico || null,
+      historico: `Identificada pelo Pl@ntNet (${c.nome_cientifico}, ${pct(c.score)}) em ${hojeISO()}. Ficha da IA pendente.`
+    });
+    for (const f of lista) await salvarFoto(db, id, f.tipo, f.original, null, false);
+    await salvarEvento(db, {
+      planta_id: id, data: hojeISO(), tipo: "observacao", produto: null, dose_g_l: null, volume_ml: null,
+      observacao: "Incluída só com a identificação do Pl@ntNet (Gemini indisponível). Fazer o check-up com IA depois."
+    });
+    avisar("✔ Planta incluída. Complete o questionário.");
+    ir(`/planta/${id}/editar`);
+  }
+
+  async function desejoSemIA() {
+    const c = escolhido !== null ? candidatos[escolhido] : null;
+    if (!c) return;
+    setSalvando(true);
+    await db.lista_desejos.add({
+      id: crypto.randomUUID(), nome: c.nomes_populares[0] || c.nome_cientifico, especie: c.nome_cientifico || null,
+      prioridade: "média", zona_compativel: null, epoca_compra: null, preco_alvo: null,
+      observacao: `Identificada pelo Pl@ntNet (${pct(c.score)}). Informe a luz que ela precisa.`
+    });
+    avisar("✔ Adicionada à lista de desejos");
+    ir("/desejos");
+  }
+
+  async function guardarSemLaudo() {
+    if (!alvo) return;
+    setSalvando(true);
+    for (const f of lista) await salvarFoto(db, alvo.id, f.tipo, f.original, null, false);
+    await salvarEvento(db, {
+      planta_id: alvo.id, data: hojeISO(), tipo: "observacao", produto: null, dose_g_l: null, volume_ml: null,
+      observacao: "Fotos de check-up guardadas; laudo não feito (Gemini indisponível)."
+    });
+    avisar("✔ Fotos guardadas. Peça o laudo mais tarde.");
+    ir(`/planta/${alvo.id}`);
   }
 
   async function salvarCheckup() {

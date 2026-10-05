@@ -13,7 +13,7 @@
  * Segurança: toda chamada precisa do token gerado pela função configurar() (fica nas Propriedades do script).
  * As chaves de IA ficam só aqui, nas Propriedades do script (nunca no app):
  *   PLANTNET_KEY, GEMINI_KEY — obrigatórias para a Fase 2;
- *   GEMINI_MODELO (padrão gemini-3.8-flash), GEMINI_RESERVA (padrão gemini-3.7-flash,gemini-3.5-flash),
+ *   GEMINI_MODELO (padrão gemini-3.8-flash), GEMINI_RESERVA (lista de modelos reserva; padrão em RESERVA_PADRAO),
  *   GEMINI_LIMITE_DIA (padrão 20), PLANTNET_LIMITE_DIA (padrão 500) — opcionais.
  * Cada chamada de IA é anotada na aba "uso_ia"; ao chegar a 80% do limite do dia, novas chamadas são recusadas.
  */
@@ -390,7 +390,7 @@ function analisar_(req) {
   // modelo principal e reservas (todos com cota grátis), usados se o principal estiver sobrecarregado.
   // O último modelo que respondeu bem vai primeiro (lembrado por 1 hora), para não esperar o sobrecarregado de novo.
   let modelos = [prop_("GEMINI_MODELO", "gemini-3.8-flash")].concat(
-    prop_("GEMINI_RESERVA", "gemini-3.7-flash,gemini-3.5-flash").split(",").map(function (m) { return m.trim(); }).filter(Boolean)
+    prop_("GEMINI_RESERVA", RESERVA_PADRAO).split(",").map(function (m) { return m.trim(); }).filter(Boolean)
   );
   const cache = CacheService.getScriptCache();
   const ultimoOk = cache.get("gemini_modelo_ok");
@@ -401,9 +401,17 @@ function analisar_(req) {
   }));
 
   let ultimo = null;
+  const inicio = Date.now();
+  // até 2 rodadas por todos os modelos; a segunda só se a primeira falhou rápido (sobrecarga momentânea)
+  for (let rodada = 0; rodada < 2; rodada++) {
+    if (rodada > 0) {
+      if (Date.now() - inicio > 120000 || !ultimo || (ultimo.codigo !== 503 && ultimo.codigo !== 500)) break;
+      Utilities.sleep(10000);
+    }
   for (let m = 0; m < modelos.length; m++) {
+    if (Date.now() - inicio > 240000) break; // não passar dos 6 minutos do Apps Script
     const modelo = modelos[m];
-    for (let tentativa = 0; tentativa < 1; tentativa++) { // uma tentativa por modelo: sobrecarga costuma demorar ~1 min para responder
+    for (let tentativa = 0; tentativa < 1; tentativa++) { // uma tentativa por modelo por rodada
       const corpo = { model: modelo, input: entrada, store: false };
       if (req.esquema) corpo.response_format = { type: "text", mime_type: "application/json", schema: req.esquema };
       let resp = chamarGemini_(GEMINI_URL, corpo, chave);
@@ -422,18 +430,34 @@ function analisar_(req) {
         if (!texto) throw new Error("O Gemini não devolveu texto.");
         return { ok: true, resultado: lerJson_(texto), tokens: tokens, modelo: modelo };
       }
-      // falha não conta na cota do dia (quantidade 0), só fica anotada
-      anotarUso_("gemini", 0, "", modelo + " HTTP " + codigo);
-      ultimo = { codigo: codigo, texto: resp.getContentText().slice(0, 200), modelo: modelo };
-      if (codigo === 400 || codigo === 401 || codigo === 403) {
-        throw new Error("O Gemini recusou o pedido (" + codigo + "). Confira a chave GEMINI_KEY e o modelo " + modelo + ". " + ultimo.texto);
+      // falha não conta na cota do dia (quantidade 0), só fica anotada, com o começo da mensagem do Google
+      const msg = resp.getContentText().slice(0, 200);
+      anotarUso_("gemini", 0, "", modelo + " HTTP " + codigo + " " + mensagemDoErro_(msg));
+      ultimo = { codigo: codigo, texto: msg, modelo: modelo };
+      // problema na chave: não adianta tentar outro modelo
+      if (codigo === 401 || codigo === 403 || (codigo === 400 && /api.?key/i.test(msg))) {
+        throw new Error("O Gemini recusou a chave (" + codigo + "). Confira a GEMINI_KEY nas Propriedades do script. " + mensagemDoErro_(msg));
       }
-      // sobrecarga (503/500), modelo indisponível (404) ou cota dele esgotada (429): vai para a reserva
+      // sobrecarga (503/500), modelo indisponível (404/400) ou cota dele esgotada (429): vai para a reserva
       if (cache.get("gemini_modelo_ok") === modelo) cache.remove("gemini_modelo_ok");
     }
   }
+  }
   if (ultimo && ultimo.codigo === 429) throw new Error("O Gemini recusou: cota grátis atingida em todos os modelos. Tente mais tarde.");
   throw new Error("O Gemini está sobrecarregado agora (" + (ultimo ? ultimo.codigo : "?") + "). Isso costuma passar em alguns minutos: tente de novo.");
+}
+
+// Reservas com cota grátis (segundo a página de preços do Gemini), das mais novas às mais leves e antigas.
+const RESERVA_PADRAO = "gemini-3.7-flash,gemini-3.6-flash,gemini-3.5-flash,gemini-3.5-flash-lite,gemini-3.1-flash-lite,gemini-2.5-flash,gemini-2.5-flash-lite";
+
+/** Só a frase da mensagem de erro do Google (para a aba uso_ia). */
+function mensagemDoErro_(texto) {
+  try {
+    const j = JSON.parse(texto);
+    return String((j.error && (j.error.message || j.error.status)) || "").slice(0, 120);
+  } catch (e) {
+    return String(texto).slice(0, 120);
+  }
 }
 
 function chamarGemini_(url, corpo, chave) {

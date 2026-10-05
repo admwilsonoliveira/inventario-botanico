@@ -427,3 +427,5 @@ details summary { cursor: pointer; color: var(--suave); min-height: 36px; paddin
 .comparacao figcaption { font-size: 0.8rem; color: var(--suave); margin-top: 4px; }
 button.foto { border: 2px solid transparent; background: none; padding: 0; border-radius: 12px; font: inherit; cursor: pointer; }
 button.foto.escolhida { border-color: var(--verde); }
+.plano-b { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--vermelho); color: var(--texto); }
+.plano-b p { margin: 0 0 4px; font-weight: 500; }
